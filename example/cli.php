@@ -16,7 +16,7 @@ $inputFileName = $argv[1] ?? 'data/transactions.csv';
 
 $csv = (new CsvReader())->read($inputFileName);
 
-$transactions = array_map(static fn(array $i) => Transaction::fromArray($i), $csv);
+$transactions = array_map(static fn (array $i) => Transaction::fromArray($i), $csv);
 $grouped = (new GroupedTransactions())->byKind(...$transactions);
 
 $stats = new TransactionStatistics([

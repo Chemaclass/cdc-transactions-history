@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 
 final class TransactionStatisticsTest extends TestCase
 {
-    public function test_viban_purchase(): void
+    public function test_for_grouped_by_kind(): void
     {
         $transactions = [
             Transaction::fromArray([

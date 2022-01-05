@@ -25,9 +25,8 @@ final class GroupedTransactionsTest extends TestCase
         ];
 
         $groupedTransactions = new GroupedTransactions();
-        $actual = $groupedTransactions->byKind(...$transactions);
 
-        $expected = [
+        self::assertEquals([
             'transaction kind 1' => [
                 Transaction::fromArray([
                     'Transaction Kind' => 'transaction kind 1',
@@ -41,8 +40,6 @@ final class GroupedTransactionsTest extends TestCase
                     'Transaction Kind' => 'transaction kind 2',
                 ]),
             ],
-        ];
-
-        self::assertEquals($expected, $actual);
+        ], $groupedTransactions->byKind(...$transactions));
     }
 }

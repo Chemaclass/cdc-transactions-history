@@ -6,7 +6,6 @@ namespace App\Domain;
 
 use App\Domain\TransactionManager\NullTransactionManager;
 use App\Domain\TransactionManager\TransactionManagerInterface;
-use JetBrains\PhpStorm\Pure;
 
 final class TransactionStatistics
 {
@@ -24,11 +23,12 @@ final class TransactionStatistics
     /**
      * @param array<string,list<Transaction>> $groupedTransactions [kind => [Transaction,...]]
      *
-     * @return array<string,array> [kind => [mixed]]
+     * @return array<string,array<string,mixed>>
      */
     public function forGroupedByKind(array $groupedTransactions): array
     {
         $result = [];
+
         foreach ($groupedTransactions as $kind => $transactions) {
             $manager = $this->getManagerByKind($kind);
             $result[$kind] = $manager->manageTransactions(...$transactions);
@@ -37,7 +37,6 @@ final class TransactionStatistics
         return $result;
     }
 
-    #[Pure]
     private function getManagerByKind(string $kind): TransactionManagerInterface
     {
         return $this->transactionManagers[$kind] ?? new NullTransactionManager();

@@ -4,39 +4,100 @@ declare(strict_types=1);
 
 namespace App\Domain;
 
-use JetBrains\PhpStorm\Pure;
-
 /**
  * @psalm-immutable
  */
 final class Transaction
 {
-    public string $timestampUtc;
-    public string $transactionDescription;
-    public string $currency;
-    public float $amount;
-    public string $toCurrency;
-    public float $toAmount;
-    public string $nativeCurrency;
-    public float $nativeAmount;
-    public float $nativeAmountInUsd;
-    public string $transactionKind;
+    private string $timestampUtc = '';
 
-    #[Pure]
+    private string $transactionDescription = '';
+
+    private string $currency = '';
+
+    private float $amount = 0.0;
+
+    private string $toCurrency = '';
+
+    private float $toAmount = 0.0;
+
+    private string $nativeCurrency = '';
+
+    private float $nativeAmount = 0.0;
+
+    private string $transactionKind = '';
+
+    /**
+     * @param array{
+     *     "Timestamp (UTC)": string|null,
+     *     "Transaction Description": string|null,
+     *     "Currency": string|null,
+     *     "Amount": string|null,
+     *     "To Currency": string|null,
+     *     "To Amount": string|null,
+     *     "Native Currency": string|null,
+     *     "Native Amount": string|null,
+     *     "Transaction Kind": string|null,
+     * } $array
+     */
     public static function fromArray(array $array): self
     {
         $self = new self();
-        $self->timestampUtc = (string)($array['Timestamp (UTC)'] ?? '');
-        $self->transactionDescription = (string)($array['Transaction Description'] ?? '');
-        $self->currency = (string)($array['Currency'] ?? '');
-        $self->amount = (float)($array['Amount'] ?? '');
-        $self->toCurrency = (string)($array['To Currency'] ?? '');
-        $self->toAmount = (float)($array['To Amount'] ?? '');
-        $self->nativeCurrency = (string)($array['Native Currency'] ?? '');
-        $self->nativeAmount = (float)($array['Native Amount'] ?? '');
-        $self->nativeAmountInUsd = (float)($array['Native Amount (in USD)'] ?? '');
-        $self->transactionKind = (string)($array['Transaction Kind'] ?? '');
+        $self->timestampUtc = $array['Timestamp (UTC)'] ?? '';
+        $self->transactionDescription = $array['Transaction Description'] ?? '';
+        $self->currency = $array['Currency'] ?? '';
+        $self->amount = (float) ($array['Amount'] ?? '');
+        $self->toCurrency = $array['To Currency'] ?? '';
+        $self->toAmount = (float) ($array['To Amount'] ?? '');
+        $self->nativeCurrency = $array['Native Currency'] ?? '';
+        $self->nativeAmount = (float) ($array['Native Amount'] ?? '');
+        $self->transactionKind = $array['Transaction Kind'] ?? '';
 
         return $self;
+    }
+
+    public function timestampUtc(): string
+    {
+        return $this->timestampUtc;
+    }
+
+    public function transactionDescription(): string
+    {
+        return $this->transactionDescription;
+    }
+
+    public function currency(): string
+    {
+        return $this->currency;
+    }
+
+    public function amount(): float
+    {
+        return $this->amount;
+    }
+
+    public function toCurrency(): string
+    {
+        return $this->toCurrency;
+    }
+
+    public function toAmount(): float
+    {
+        return $this->toAmount;
+    }
+
+    public function nativeCurrency(): string
+    {
+        return $this->nativeCurrency;
+    }
+
+    public function nativeAmount(): float
+    {
+        return $this->nativeAmount;
+    }
+
+    public function transactionKind(): string
+    {
+        return $this->transactionKind;
     }
 }

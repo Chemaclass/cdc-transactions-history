@@ -8,5 +8,8 @@ use App\Domain\Transaction;
 
 interface TransactionManagerInterface
 {
+    /**
+     * @return array<string,mixed>
+     */
     public function manageTransactions(Transaction ...$transactions): array;
 }
