@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Unit\Domain\TransactionManager;
 
 use App\Domain\Transaction;
-use App\Domain\TransactionKind;
 use App\Domain\TransactionManager\VIbanPurchaseTransactionManager;
 use PHPUnit\Framework\TestCase;
 
@@ -14,46 +13,22 @@ final class VIbanPurchaseTransactionManagerTest extends TestCase
     public function test_total(): void
     {
         $transactions = [
-            Transaction::fromArray([
-                'Currency' => 'EUR',
-                'Amount' => '-100',
-                'To Currency' => 'BCH',
-                'To Amount' => '1',
-                'Native Currency' => 'EUR',
-                'Native Amount' => '100',
-                'Transaction Kind' => TransactionKind::VIBAN_PURCHASE,
-            ]),
-            Transaction::fromArray([
-                'Currency' => 'EUR',
-                'Amount' => '-200',
-                'To Currency' => 'DOT',
-                'To Amount' => '2',
-                'Native Currency' => 'EUR',
-                'Native Amount' => '200',
-                'Transaction Kind' => TransactionKind::VIBAN_PURCHASE,
-            ]),
-            Transaction::fromArray([
-                'Currency' => 'EUR',
-                'Amount' => '-300',
-                'To Currency' => 'ADA',
-                'To Amount' => '3',
-                'Native Currency' => 'EUR',
-                'Native Amount' => '300',
-                'Transaction Kind' => TransactionKind::VIBAN_PURCHASE,
-            ]),
+            (new Transaction())->setToCurrency('BCH')->setNativeAmount(10),
+            (new Transaction())->setToCurrency('DOT')->setNativeAmount(20.2),
+            (new Transaction())->setToCurrency('ADA')->setNativeAmount(30.33),
         ];
 
         $manager = new VIbanPurchaseTransactionManager();
 
-        self::assertEquals([
+        self::assertSame([
             'BCH' => [
-                'totalInEuros' => 100,
+                'totalInEuros' => 10.0,
             ],
             'DOT' => [
-                'totalInEuros' => 200,
+                'totalInEuros' => 20.2,
             ],
             'ADA' => [
-                'totalInEuros' => 300,
+                'totalInEuros' => 30.33,
             ],
         ], $manager->manageTransactions(...$transactions));
     }

@@ -14,8 +14,8 @@ final class GroupedTransactions
         $result = [];
 
         foreach ($transactions as $transaction) {
-            $result[$transaction->transactionKind()] ??= [];
-            $result[$transaction->transactionKind()][] = $transaction;
+            $result[$transaction->getTransactionKind()] ??= [];
+            $result[$transaction->getTransactionKind()][] = $transaction;
         }
 
         return $result;

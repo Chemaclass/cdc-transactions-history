@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain;
 
-/**
- * @psalm-immutable
- */
 final class Transaction
 {
     private string $timestampUtc = '';
@@ -56,48 +53,111 @@ final class Transaction
         return $self;
     }
 
-    public function timestampUtc(): string
+    public function getTimestampUtc(): string
     {
         return $this->timestampUtc;
     }
 
-    public function transactionDescription(): string
+    public function setTimestampUtc(string $timestampUtc): self
+    {
+        $this->timestampUtc = $timestampUtc;
+
+        return $this;
+    }
+
+    public function getTransactionDescription(): string
     {
         return $this->transactionDescription;
     }
 
-    public function currency(): string
+    public function setTransactionDescription(string $transactionDescription): self
+    {
+        $this->transactionDescription = $transactionDescription;
+
+        return $this;
+    }
+
+    public function getCurrency(): string
     {
         return $this->currency;
     }
 
-    public function amount(): float
+    public function setCurrency(string $currency): self
+    {
+        $this->currency = $currency;
+
+        return $this;
+    }
+
+    public function getAmount(): float
     {
         return $this->amount;
     }
 
-    public function toCurrency(): string
+    public function setAmount(float $amount): self
+    {
+        $this->amount = $amount;
+
+        return $this;
+    }
+
+    public function getToCurrency(): string
     {
         return $this->toCurrency;
     }
 
-    public function toAmount(): float
+    public function setToCurrency(string $toCurrency): self
+    {
+        $this->toCurrency = $toCurrency;
+
+        return $this;
+    }
+
+    public function getToAmount(): float
     {
         return $this->toAmount;
     }
 
-    public function nativeCurrency(): string
+    public function setToAmount(float $toAmount): self
+    {
+        $this->toAmount = $toAmount;
+
+        return $this;
+    }
+
+    public function getNativeCurrency(): string
     {
         return $this->nativeCurrency;
     }
 
-    public function nativeAmount(): float
+    public function setNativeCurrency(string $nativeCurrency): self
+    {
+        $this->nativeCurrency = $nativeCurrency;
+
+        return $this;
+    }
+
+    public function getNativeAmount(): float
     {
         return $this->nativeAmount;
     }
 
-    public function transactionKind(): string
+    public function setNativeAmount(float $nativeAmount): self
+    {
+        $this->nativeAmount = $nativeAmount;
+
+        return $this;
+    }
+
+    public function getTransactionKind(): string
     {
         return $this->transactionKind;
+    }
+
+    public function setTransactionKind(string $transactionKind): self
+    {
+        $this->transactionKind = $transactionKind;
+
+        return $this;
     }
 }

@@ -15,47 +15,37 @@ final class TransactionStatisticsTest extends TestCase
 {
     public function test_for_grouped_by_kind(): void
     {
+        $bch1 = (new Transaction())
+            ->setCurrency('EUR')
+            ->setAmount(-100)
+            ->setToCurrency('BCH')
+            ->setToAmount(0.5)
+            ->setNativeCurrency('EUR')
+            ->setNativeAmount(100)
+            ->setTransactionKind(TransactionKind::VIBAN_PURCHASE);
+
+        $bch2 = (new Transaction())
+            ->setCurrency('EUR')
+            ->setAmount(-200)
+            ->setToCurrency('BCH')
+            ->setToAmount(1.2)
+            ->setNativeCurrency('EUR')
+            ->setNativeAmount(200)
+            ->setTransactionKind(TransactionKind::VIBAN_PURCHASE);
+
+        $dot1 = (new Transaction())
+            ->setCurrency('EUR')
+            ->setAmount(-300)
+            ->setToCurrency('DOT')
+            ->setToAmount(30)
+            ->setNativeCurrency('EUR')
+            ->setNativeAmount(300)
+            ->setTransactionKind(TransactionKind::CRYPTO_WITHDRAWAL);
+
         $transactions = [
-            Transaction::fromArray([
-                'Currency' => 'EUR',
-                'Amount' => '-480.13',
-                'To Currency' => 'BCH',
-                'To Amount' => '0.4375',
-                'Native Currency' => 'EUR',
-                'Native Amount' => '480.13',
-                'Native Amount (in USD)' => '544.3286432248',
-                'Transaction Kind' => TransactionKind::VIBAN_PURCHASE,
-            ]),
-            Transaction::fromArray([
-                'Currency' => 'EUR',
-                'Amount' => '-148.98',
-                'To Currency' => 'BCH',
-                'To Amount' => '0.1265',
-                'Native Currency' => 'EUR',
-                'Native Amount' => '148.98',
-                'Native Amount (in USD)' => '168.9002588208',
-                'Transaction Kind' => TransactionKind::VIBAN_PURCHASE,
-            ]),
-            Transaction::fromArray([
-                'Currency' => 'EUR',
-                'Amount' => '-34.38',
-                'To Currency' => 'DOT',
-                'To Amount' => '1000.0',
-                'Native Currency' => 'EUR',
-                'Native Amount' => '34.38',
-                'Native Amount (in USD)' => '38.9769828048',
-                'Transaction Kind' => TransactionKind::VIBAN_PURCHASE,
-            ]),
-            Transaction::fromArray([
-                'Currency' => 'EUR',
-                'Amount' => '-110.06',
-                'To Currency' => 'ADA',
-                'To Amount' => '100',
-                'Native Currency' => 'EUR',
-                'Native Amount' => '110.06',
-                'Native Amount (in USD)' => '124.7762282576',
-                'Transaction Kind' => TransactionKind::CRYPTO_WITHDRAWAL,
-            ]),
+            $bch1,
+            $bch2,
+            $dot1,
         ];
 
         $grouped = (new GroupedTransactions())->byKind(...$transactions);
