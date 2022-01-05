@@ -8,65 +8,104 @@ jobs:
   coding-guidelines:
     name: Coding Guidelines
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Install PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.0
-          coverage: none
-
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest
-
-      - name: Run friendsofphp/php-cs-fixer
-        run: PHP_CS_FIXER_IGNORE_ENV=true ./vendor/bin/php-cs-fixer fix --dry-run --show-progress=dots --using-cache=no --verbose
-
-  type-checker:
-    name: Type Checker
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Install PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.0
-          coverage: none
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest
-
-      - name: Run Psalm
-        run: ./vendor/bin/psalm --config=psalm.xml --no-progress --shepherd --show-info=false --stats
-
-      - name: Run PHPStan
-        run: ./vendor/bin/phpstan analyze -c phpstan.neon src
-
-  tests:
-    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        operating-system: [ 'ubuntu-latest', 'windows-latest', 'macos-latest' ]
-        php: [ '8.0' ]
-    name: Tests on PHP ${{ matrix.php }} - ${{ matrix.operating-system }}
+        php: [ '7.4' ]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-      - name: Install PHP
-        uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
           coverage: none
+          tools: composer
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
 
       - name: Install dependencies
         run: composer install --no-interaction --no-ansi --no-progress
 
-      - name: Run PHPUnit tests
-        run: vendor/bin/phpunit
+      - name: Run friendsofphp/php-cs-fixer
+        run: ./vendor/bin/php-cs-fixer fix --allow-risky=yes --dry-run --show-progress=dots --using-cache=no --verbose
 
-      - name: Run tests
-        run: ./vendor/bin/phpunit
+  type-checker:
+    name: Type Checker
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [ '7.4' ]
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: composer
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-ansi --no-progress
+
+      - name: Run vimeo/psalm on internal code
+        run: ./vendor/bin/psalm --config=psalm.xml --no-progress --shepherd --show-info=false --stats --php-version=${{ matrix.php }}
+
+      - name: Run PHPStan
+        run: ./vendor/bin/phpstan analyze -c phpstan.neon src
+
+  compiler-tests:
+    name: Compiler tests on PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [ '7.4', '8.0', '8.1' ]
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: composer
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-ansi --no-progress
+
+      - name: Run unit tests to the compiler itself
+        run: vendor/bin/phpunit --testsuite unit
+
+      - name: Run integration tests to the compiler itself
+        run: vendor/bin/phpunit --testsuite integration
