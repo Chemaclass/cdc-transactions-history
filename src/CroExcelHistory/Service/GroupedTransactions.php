@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Domain;
+namespace App\CroExcelHistory\Service;
+
+use App\CroExcelHistory\Transfer\Transaction;
 
 final class GroupedTransactions
 {

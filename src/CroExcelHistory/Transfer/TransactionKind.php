@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Domain;
+namespace App\CroExcelHistory\Transfer;
 
-final class TransactionKind
+interface TransactionKind
 {
     public const CRYPTO_WITHDRAWAL = 'crypto_withdrawal';
 

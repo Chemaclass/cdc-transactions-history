@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Domain\TransactionManager;
+namespace Tests\Unit\CroExcelHistory\TransactionManager;
 
-use App\Domain\Transaction;
-use App\Domain\TransactionManager\VIbanPurchaseTransactionManager;
+use App\CroExcelHistory\TransactionManager\VIbanPurchaseTransactionManager;
+use App\CroExcelHistory\Transfer\Transaction;
 use PHPUnit\Framework\TestCase;
 
 final class VIbanPurchaseTransactionManagerTest extends TestCase

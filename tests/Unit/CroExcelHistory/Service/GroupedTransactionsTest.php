@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Domain;
+namespace Tests\Unit\CroExcelHistory\Service;
 
-use App\Domain\GroupedTransactions;
-use App\Domain\Transaction;
+use App\CroExcelHistory\Service\GroupedTransactions;
+use App\CroExcelHistory\Transfer\Transaction;
 use PHPUnit\Framework\TestCase;
 
 final class GroupedTransactionsTest extends TestCase

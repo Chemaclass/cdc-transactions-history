@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\TransactionManager;
+namespace App\CroExcelHistory\TransactionManager;
 
-use App\Domain\Transaction;
+use App\CroExcelHistory\Transfer\Transaction;
 
 final class VIbanPurchaseTransactionManager implements TransactionManagerInterface
 {

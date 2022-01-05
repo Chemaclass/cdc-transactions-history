@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain;
+namespace App\CroExcelHistory\Transfer;
 
 final class Transaction
 {
@@ -25,17 +25,7 @@ final class Transaction
     private string $transactionKind = '';
 
     /**
-     * @param array{
-     *     "Timestamp (UTC)": string|null,
-     *     "Transaction Description": string|null,
-     *     "Currency": string|null,
-     *     "Amount": string|null,
-     *     "To Currency": string|null,
-     *     "To Amount": string|null,
-     *     "Native Currency": string|null,
-     *     "Native Amount": string|null,
-     *     "Transaction Kind": string|null,
-     * } $array
+     * @param array<string,null|string> $array
      */
     public static function fromArray(array $array): self
     {
