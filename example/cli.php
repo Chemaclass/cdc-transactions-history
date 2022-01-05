@@ -3,7 +3,7 @@
 
 declare(strict_types=1);
 
-use App\CroExcelHistory\CroExcelHistoryFacade as CroExcelHistoryFacade;
+use App\CroExcelHistory\CroExcelHistoryFacade;
 use App\Csv\CsvReader;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
