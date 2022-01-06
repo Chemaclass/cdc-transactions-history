@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\CroExcelHistory\Service;
 
-use App\CroExcelHistory\Mapper\TransactionMapper;
+use App\CroExcelHistory\Mapper\CsvHeadersTransactionMapper;
 use App\CroExcelHistory\Service\StatisticsService;
 use App\CroExcelHistory\TransactionManager\TransactionManagerInterface;
 use App\CroExcelHistory\Transfer\TransactionKind;
@@ -33,7 +33,7 @@ final class StatisticsServiceTest extends TestCase
         $withdrawalManager->method('manageTransactions')->willReturn(['withdrawal' => 'manager']);
 
         $stats = new StatisticsService(
-            new TransactionMapper(),
+            new CsvHeadersTransactionMapper(),
             [
                 TransactionKind::VIBAN_PURCHASE => $purchaseManager,
                 TransactionKind::CRYPTO_WITHDRAWAL => $withdrawalManager,

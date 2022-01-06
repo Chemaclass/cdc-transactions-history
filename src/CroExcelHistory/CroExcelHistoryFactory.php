@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\CroExcelHistory;
 
-use App\CroExcelHistory\Mapper\TransactionMapper;
+use App\CroExcelHistory\Mapper\CsvHeadersTransactionMapper;
 use App\CroExcelHistory\Mapper\TransactionMapperInterface;
 use App\CroExcelHistory\Service\StatisticsService;
 use App\CroExcelHistory\TransactionManager\TransactionManagerInterface;
@@ -24,7 +24,7 @@ final class CroExcelHistoryFactory extends AbstractFactory
 
     private function createTransactionMapper(): TransactionMapperInterface
     {
-        return new TransactionMapper();
+        return new CsvHeadersTransactionMapper();
     }
 
     /**

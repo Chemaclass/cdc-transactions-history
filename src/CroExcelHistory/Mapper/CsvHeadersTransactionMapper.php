@@ -6,7 +6,7 @@ namespace App\CroExcelHistory\Mapper;
 
 use App\CroExcelHistory\Transfer\Transaction;
 
-final class TransactionMapper implements TransactionMapperInterface
+final class CsvHeadersTransactionMapper implements TransactionMapperInterface
 {
     /**
      * @param array<string,string> $array

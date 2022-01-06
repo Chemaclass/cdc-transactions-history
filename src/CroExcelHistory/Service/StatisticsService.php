@@ -34,9 +34,9 @@ final class StatisticsService
      */
     public function forCsv(array $csv): array
     {
-        $groupedTransactions = $this->generateGroupedTransactions($csv);
+        $groupedTransactions = $this->generateTransactionsGroupedByKind($csv);
 
-        return $this->loopTransactions($groupedTransactions);
+        return $this->manageTransactions($groupedTransactions);
     }
 
     /**
@@ -44,7 +44,7 @@ final class StatisticsService
      *
      * @return array<string,list<Transaction>>
      */
-    private function generateGroupedTransactions(array $csv): array
+    private function generateTransactionsGroupedByKind(array $csv): array
     {
         $transactions = array_map(
             fn(array $row): Transaction => $this->transactionMapper->map($row),
@@ -66,7 +66,7 @@ final class StatisticsService
      *
      * @return array<string,array<string,mixed>>
      */
-    private function loopTransactions(array $groupedTransactions): array
+    private function manageTransactions(array $groupedTransactions): array
     {
         $result = [];
 
