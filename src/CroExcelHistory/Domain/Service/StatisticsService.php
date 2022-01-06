@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\CroExcelHistory\Service;
+namespace App\CroExcelHistory\Domain\Service;
 
-use App\CroExcelHistory\Mapper\TransactionMapperInterface;
-use App\CroExcelHistory\TransactionManager\NullTransactionManager;
-use App\CroExcelHistory\TransactionManager\TransactionManagerInterface;
-use App\CroExcelHistory\Transfer\Transaction;
+use App\CroExcelHistory\Domain\Mapper\TransactionMapperInterface;
+use App\CroExcelHistory\Domain\TransactionManager\NullTransactionManager;
+use App\CroExcelHistory\Domain\TransactionManager\TransactionManagerInterface;
+use App\CroExcelHistory\Domain\Transfer\Transaction;
 
 final class StatisticsService
 {

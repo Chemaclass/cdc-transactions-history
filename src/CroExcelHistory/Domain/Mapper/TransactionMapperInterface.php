@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\CroExcelHistory\Mapper;
+namespace App\CroExcelHistory\Domain\Mapper;
 
-use App\CroExcelHistory\Transfer\Transaction;
+use App\CroExcelHistory\Domain\Transfer\Transaction;
 
 interface TransactionMapperInterface
 {

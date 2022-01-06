@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\CroExcelHistory\Transfer;
+namespace App\CroExcelHistory\Domain\Transfer;
 
 final class Transaction
 {

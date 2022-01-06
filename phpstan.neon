@@ -6,3 +6,5 @@ parameters:
     paths:
         - src
         - tests
+    ignoreErrors:
+        - '#Cannot cast mixed to string#'

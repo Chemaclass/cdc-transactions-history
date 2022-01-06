@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Integration\CroExcelHistory;
 
 use App\CroExcelHistory\CroExcelHistoryFacade;
-use App\CroExcelHistory\Transfer\TransactionKind;
+use App\CroExcelHistory\Domain\Transfer\TransactionKind;
 use PHPUnit\Framework\TestCase;
 
 final class CroExcelHistoryFacadeTest extends TestCase

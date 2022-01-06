@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Unit\CroExcelHistory\Service;
 
-use App\CroExcelHistory\Mapper\CsvHeadersTransactionMapper;
-use App\CroExcelHistory\Service\StatisticsService;
-use App\CroExcelHistory\TransactionManager\TransactionManagerInterface;
-use App\CroExcelHistory\Transfer\TransactionKind;
+use App\CroExcelHistory\Domain\Mapper\CsvHeadersTransactionMapper;
+use App\CroExcelHistory\Domain\Service\StatisticsService;
+use App\CroExcelHistory\Domain\TransactionManager\TransactionManagerInterface;
+use App\CroExcelHistory\Domain\Transfer\TransactionKind;
 use PHPUnit\Framework\TestCase;
 
 final class StatisticsServiceTest extends TestCase
