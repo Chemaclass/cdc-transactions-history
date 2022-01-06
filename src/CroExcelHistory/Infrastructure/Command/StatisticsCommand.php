@@ -22,16 +22,21 @@ final class StatisticsCommand extends Command
 
     private int $maxTickerLength = 3;
 
-    public function __construct(
-        StatisticsService $croExcelHistoryFacade
-    ) {
+    /** @psalm-suppress PropertyNotSetInConstructor */
+    private InputInterface $input;
+
+    /** @psalm-suppress PropertyNotSetInConstructor */
+    private OutputInterface $output;
+
+    public function __construct(StatisticsService $statisticsService)
+    {
         parent::__construct('stats');
-        $this->statisticsService = $croExcelHistoryFacade;
+        $this->statisticsService = $statisticsService;
     }
 
     protected function configure(): void
     {
-        $this->setDescription('Get interesting data from your transactions history.')
+        $this->setDescription('Get interesting data from your transactions history group by transactions kind.')
             ->addArgument('path', InputArgument::OPTIONAL, 'The csv file path where the transactions are.', self::DEFAULT_PATH)
             ->addOption('kind', null, InputArgument::OPTIONAL, 'Filter by transaction kind')
             ->addOption('ticker', null, InputArgument::OPTIONAL, 'Filter by ticker');
@@ -42,21 +47,23 @@ final class StatisticsCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->input = $input;
+        $this->output = $output;
+
         /** @var string $path */
         $path = $input->getArgument('path');
 
         /** @var array<string,array<string,mixed>> */
         $transactionsGroupedByKind = $this->statisticsService->forFilepath($path);
+        $this->calculateMaxTickerLength($transactionsGroupedByKind);
 
         /** @var null|string $transactionKind */
         $transactionKind = $input->getOption('kind');
 
-        $this->calculateMaxTickerLength($transactionsGroupedByKind);
-
         if (!$transactionKind) {
-            $this->renderAllTransactionKind($input, $output, $transactionsGroupedByKind);
+            $this->renderAllTransactionKind($transactionsGroupedByKind);
         } else {
-            $this->renderTransactionKind($input, $output, $transactionsGroupedByKind, $transactionKind);
+            $this->renderTransactionKind($transactionsGroupedByKind, $transactionKind);
         }
 
         return self::SUCCESS;
@@ -67,13 +74,10 @@ final class StatisticsCommand extends Command
      *
      * @throws JsonException|StringsException
      */
-    private function renderAllTransactionKind(
-        InputInterface  $input,
-        OutputInterface $output,
-        array           $transactionsGroupedByKind
-    ): void {
+    private function renderAllTransactionKind(array $transactionsGroupedByKind): void
+    {
         foreach (array_keys($transactionsGroupedByKind) as $transactionKind) {
-            $this->renderTransactionKind($input, $output, $transactionsGroupedByKind, $transactionKind);
+            $this->renderTransactionKind($transactionsGroupedByKind, $transactionKind);
         }
     }
 
@@ -82,22 +86,18 @@ final class StatisticsCommand extends Command
      *
      * @throws JsonException|StringsException
      */
-    private function renderTransactionKind(
-        InputInterface  $input,
-        OutputInterface $output,
-        array           $transactionsGroupedByKind,
-        string          $transactionKind
-    ): void {
-        $output->writeln("$transactionKind: ");
+    private function renderTransactionKind(array $transactionsGroupedByKind, string $transactionKind): void
+    {
+        $this->output->writeln("$transactionKind: ");
         /** @var null|string $ticker */
-        $ticker = $input->getOption('ticker');
+        $ticker = $this->input->getOption('ticker');
 
         $tickers = ($ticker)
             ? explode(',', $ticker)
             : array_keys($transactionsGroupedByKind[$transactionKind]);
 
         foreach ($tickers as $ticker) {
-            $output->writeln(sprintf(
+            $this->output->writeln(sprintf(
                 '  %s: %s',
                 str_pad($ticker, $this->maxTickerLength),
                 json_encode($transactionsGroupedByKind[$transactionKind][$ticker])

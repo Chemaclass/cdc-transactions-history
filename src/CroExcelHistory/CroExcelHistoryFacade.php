@@ -16,14 +16,4 @@ final class CroExcelHistoryFacade extends AbstractFacade
     {
         return $this->getFactory()->createStatisticsCommand();
     }
-
-    /**
-     * @return array<string,array<string,mixed>>
-     */
-    public function calculateStatistics(string $filepath): array
-    {
-        return $this->getFactory()
-            ->createStatisticsService()
-            ->forFilepath($filepath);
-    }
 }

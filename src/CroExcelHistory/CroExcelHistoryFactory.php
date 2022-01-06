@@ -23,7 +23,7 @@ final class CroExcelHistoryFactory extends AbstractFactory
         );
     }
 
-    public function createStatisticsService(): StatisticsService
+    private function createStatisticsService(): StatisticsService
     {
         return new StatisticsService(
             $this->createCsvReaderService(),
