@@ -7,7 +7,8 @@
     "require": {
         "php": ">=7.4",
         "thecodingmachine/safe": "^1.3",
-        "gacela-project/gacela": "^0.10.0"
+        "gacela-project/gacela": "^0.10.0",
+        "symfony/console": "^5.4"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
@@ -41,7 +42,7 @@
         "test-phpunit": "./vendor/bin/phpunit",
         "test-coverage": "XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-html coverage",
         "psalm": "./vendor/bin/psalm",
-        "phpstan": "./vendor/bin/phpstan analyze",
+        "phpstan": "./vendor/bin/phpstan analyze --memory-limit=2G",
         "csfix": "./vendor/bin/php-cs-fixer fix",
         "csrun": "./vendor/bin/php-cs-fixer fix --dry-run"
     },

@@ -4,13 +4,13 @@
 declare(strict_types=1);
 
 use App\CroExcelHistory\CroExcelHistoryFacade;
-use App\Csv\CsvReader;
+use App\CroExcelHistory\Domain\Service\CsvReaderService;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 $inputFileName = $argv[1] ?? 'data/transactions.csv';
 
-$csv = (new CsvReader())->read($inputFileName);
+$csv = (new CsvReaderService())->read($inputFileName);
 
 $facade = new CroExcelHistoryFacade();
 $actual = $facade->statisticsByKind($csv);

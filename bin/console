@@ -1,0 +1,23 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use App\CroExcelHistory\CroExcelHistoryFacade;
+use Gacela\Framework\Gacela;
+use Symfony\Component\Console\Application;
+
+$cwd = getcwd();
+if (!file_exists($autoloadPath = $cwd . '/vendor/autoload.php')) {
+    exit("Cannot load composer's autoload file: " . $autoloadPath);
+}
+
+require $autoloadPath;
+
+Gacela::bootstrap($cwd);
+
+$croExcelHistoryFacade = new CroExcelHistoryFacade();
+
+$application = new Application();
+$application->add($croExcelHistoryFacade->getStatisticsCommand());
+$application->run();
