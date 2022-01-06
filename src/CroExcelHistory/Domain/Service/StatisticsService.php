@@ -25,7 +25,7 @@ final class StatisticsService
     public function __construct(
         FileReaderServiceInterface $fileReaderService,
         TransactionMapperInterface $transactionMapper,
-        array $transactionManagers
+        array                      $transactionManagers
     ) {
         $this->fileReaderService = $fileReaderService;
         $this->transactionMapper = $transactionMapper;

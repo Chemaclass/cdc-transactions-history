@@ -8,7 +8,7 @@ Crypto.com app. For example, how much investment have you put into a particular 
 ### Commands
 
 - [stats](src/CroExcelHistory/Infrastructure/Command/StatisticsCommand.php):
-    - `php bin/console stats --kind=viban_purchase --ticker=ETH`
+    - `php bin/console stats data/transactions.csv --kind=viban_purchase --ticker=ETH,ADA`
     - Options
         - `kind`: filter by transaction kind
         - `ticker`: filter by ticker
