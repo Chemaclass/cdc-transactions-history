@@ -6,17 +6,14 @@ namespace App\CroExcelHistory;
 
 use App\CroExcelHistory\Domain\Mapper\CsvHeadersTransactionMapper;
 use App\CroExcelHistory\Domain\Mapper\TransactionMapperInterface;
-use App\CroExcelHistory\Domain\Service\CsvReaderService;
 use App\CroExcelHistory\Domain\Service\StatisticsService;
 use App\CroExcelHistory\Domain\TransactionManager\TransactionManagerInterface;
 use App\CroExcelHistory\Domain\TransactionManager\VIbanPurchaseTransactionManager;
 use App\CroExcelHistory\Domain\Transfer\TransactionKind;
 use App\CroExcelHistory\Infrastructure\Command\StatisticsCommand;
+use App\CroExcelHistory\Infrastructure\IO\CsvReaderService;
 use Gacela\Framework\AbstractFactory;
 
-/**
- * @method CroExcelHistoryConfig getConfig()
- */
 final class CroExcelHistoryFactory extends AbstractFactory
 {
     public function createStatisticsCommand(): StatisticsCommand

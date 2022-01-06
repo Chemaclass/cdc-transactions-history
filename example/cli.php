@@ -4,7 +4,7 @@
 declare(strict_types=1);
 
 use App\CroExcelHistory\CroExcelHistoryFacade;
-use App\CroExcelHistory\Domain\Service\CsvReaderService;
+use App\CroExcelHistory\Infrastructure\IO\CsvReaderService;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 

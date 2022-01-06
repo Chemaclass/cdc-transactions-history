@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\CroExcelHistory\Service;
+namespace Tests\Unit\CroExcelHistory\Domain\Service;
 
 use App\CroExcelHistory\Domain\Mapper\CsvHeadersTransactionMapper;
 use App\CroExcelHistory\Domain\Service\StatisticsService;

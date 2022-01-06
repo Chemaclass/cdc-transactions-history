@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\CroExcelHistory\TransactionManager;
+namespace Tests\Unit\CroExcelHistory\Domain\TransactionManager;
 
 use App\CroExcelHistory\Domain\TransactionManager\VIbanPurchaseTransactionManager;
 use App\CroExcelHistory\Domain\Transfer\Transaction;

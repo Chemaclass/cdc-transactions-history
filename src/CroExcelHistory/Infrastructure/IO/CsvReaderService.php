@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\CroExcelHistory\Domain\Service;
+namespace App\CroExcelHistory\Infrastructure\IO;
 
 use Safe\Exceptions\ArrayException;
 use Safe\Exceptions\FilesystemException;
 use function Safe\array_combine;
 use function Safe\file;
 
-final class CsvReaderService
+final class CsvReaderService implements FileReaderServiceInterface
 {
     /**
      * @throws ArrayException|FilesystemException
