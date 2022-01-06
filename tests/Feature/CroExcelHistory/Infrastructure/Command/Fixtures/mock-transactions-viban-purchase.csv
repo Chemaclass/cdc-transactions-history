@@ -1,0 +1,5 @@
+Timestamp (UTC),Currency,Amount,To Currency,To Amount,Native Currency,Native Amount,Transaction Kind
+2022-01-04 07:51:10,EUR,-101.1,BCH,0.5,EUR,101.1,viban_purchase
+2022-01-04 07:51:10,EUR,-102.2,BCH,0.5,EUR,102.2,viban_purchase
+2022-01-04 07:48:19,EUR,-202.2,ADA,2,EUR,202.2,viban_purchase
+2022-01-04 07:51:10,EUR,-303.3,DOT,3,EUR,303.3,crypto_withdrawal

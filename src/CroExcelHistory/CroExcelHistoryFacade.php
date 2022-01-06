@@ -18,14 +18,12 @@ final class CroExcelHistoryFacade extends AbstractFacade
     }
 
     /**
-     * @param list<array<string,string>> $csv
-     *
      * @return array<string,array<string,mixed>>
      */
-    public function statisticsByKind(array $csv): array
+    public function calculateStatistics(string $filepath): array
     {
         return $this->getFactory()
             ->createStatisticsService()
-            ->forCsv($csv);
+            ->forFilepath($filepath);
     }
 }

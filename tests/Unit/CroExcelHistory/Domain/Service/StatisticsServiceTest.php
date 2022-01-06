@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Unit\CroExcelHistory\Domain\Service;
 
-use App\CroExcelHistory\Domain\Mapper\CsvHeadersTransactionMapper;
+use App\CroExcelHistory\Domain\Mapper\TransactionMapperInterface;
 use App\CroExcelHistory\Domain\Service\StatisticsService;
 use App\CroExcelHistory\Domain\TransactionManager\TransactionManagerInterface;
+use App\CroExcelHistory\Domain\Transfer\Transaction;
 use App\CroExcelHistory\Domain\Transfer\TransactionKind;
+use App\CroExcelHistory\Infrastructure\IO\FileReaderServiceInterface;
 use PHPUnit\Framework\TestCase;
 
 final class StatisticsServiceTest extends TestCase
@@ -26,6 +28,14 @@ final class StatisticsServiceTest extends TestCase
             ],
         ];
 
+        $fileReaderService = $this->createMock(FileReaderServiceInterface::class);
+        $fileReaderService->method('read')->willReturn($transactions);
+
+        $transactionMapper = $this->createMock(TransactionMapperInterface::class);
+        $transactionMapper->method('map')->willReturnCallback(
+            fn(array $row) => (new Transaction())->setTransactionKind($row['Transaction Kind'])
+        );
+
         $purchaseManager = $this->createMock(TransactionManagerInterface::class);
         $purchaseManager->method('manageTransactions')->willReturn(['purchase' => 'manager']);
 
@@ -33,7 +43,8 @@ final class StatisticsServiceTest extends TestCase
         $withdrawalManager->method('manageTransactions')->willReturn(['withdrawal' => 'manager']);
 
         $stats = new StatisticsService(
-            new CsvHeadersTransactionMapper(),
+            $fileReaderService,
+            $transactionMapper,
             [
                 TransactionKind::VIBAN_PURCHASE => $purchaseManager,
                 TransactionKind::CRYPTO_WITHDRAWAL => $withdrawalManager,
@@ -43,6 +54,6 @@ final class StatisticsServiceTest extends TestCase
         self::assertEquals([
             TransactionKind::VIBAN_PURCHASE => ['purchase' => 'manager'],
             TransactionKind::CRYPTO_WITHDRAWAL => ['withdrawal' => 'manager'],
-        ], $stats->forCsv($transactions));
+        ], $stats->forFilepath('file-path'));
     }
 }

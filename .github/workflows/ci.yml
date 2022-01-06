@@ -74,7 +74,7 @@ jobs:
       - name: Run PHPStan
         run: ./vendor/bin/phpstan analyze -c phpstan.neon src
 
-  compiler-tests:
+  tests:
     name: Tests on PHP ${{ matrix.php }}
     runs-on: ubuntu-latest
     strategy:
@@ -104,8 +104,8 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --no-ansi --no-progress
 
-      - name: Run unit tests to the compiler itself
+      - name: Run unit tests
         run: vendor/bin/phpunit --testsuite unit
 
-      - name: Run integration tests to the compiler itself
-        run: vendor/bin/phpunit --testsuite integration
+      - name: Run feature tests
+        run: vendor/bin/phpunit --testsuite feature

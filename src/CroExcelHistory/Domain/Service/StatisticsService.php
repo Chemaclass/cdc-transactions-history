@@ -8,9 +8,12 @@ use App\CroExcelHistory\Domain\Mapper\TransactionMapperInterface;
 use App\CroExcelHistory\Domain\TransactionManager\NullTransactionManager;
 use App\CroExcelHistory\Domain\TransactionManager\TransactionManagerInterface;
 use App\CroExcelHistory\Domain\Transfer\Transaction;
+use App\CroExcelHistory\Infrastructure\IO\FileReaderServiceInterface;
 
 final class StatisticsService
 {
+    private FileReaderServiceInterface $fileReaderService;
+
     private TransactionMapperInterface $transactionMapper;
 
     /** @var array<string,TransactionManagerInterface> */
@@ -20,20 +23,22 @@ final class StatisticsService
      * @param array<string,TransactionManagerInterface> $transactionManagers
      */
     public function __construct(
+        FileReaderServiceInterface $fileReaderService,
         TransactionMapperInterface $transactionMapper,
         array $transactionManagers
     ) {
+        $this->fileReaderService = $fileReaderService;
         $this->transactionMapper = $transactionMapper;
         $this->transactionManagers = $transactionManagers;
     }
 
     /**
-     * @param list<array<string,string>> $csv
-     *
      * @return array<string,array<string,mixed>>
      */
-    public function forCsv(array $csv): array
+    public function forFilepath(string $filepath): array
     {
+        $csv = $this->fileReaderService->read($filepath);
+
         $groupedTransactions = $this->generateTransactionsGroupedByKind($csv);
 
         return $this->manageTransactions($groupedTransactions);

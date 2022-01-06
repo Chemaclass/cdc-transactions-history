@@ -19,7 +19,6 @@ final class CroExcelHistoryFactory extends AbstractFactory
     public function createStatisticsCommand(): StatisticsCommand
     {
         return new StatisticsCommand(
-            $this->createCsvReaderService(),
             $this->createStatisticsService()
         );
     }
@@ -27,6 +26,7 @@ final class CroExcelHistoryFactory extends AbstractFactory
     public function createStatisticsService(): StatisticsService
     {
         return new StatisticsService(
+            $this->createCsvReaderService(),
             $this->createTransactionMapper(),
             $this->createTransactionManagers()
         );
