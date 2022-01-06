@@ -1,6 +1,6 @@
 {
-    "description": "CRO Excel History",
-    "name": "chemaclass/cro-excel-history",
+    "description": "CDC Transactions History",
+    "name": "chemaclass/cdc-transactions-history",
     "type": "project",
     "license": "MIT",
     "keywords": ["php", "excel", "history"],

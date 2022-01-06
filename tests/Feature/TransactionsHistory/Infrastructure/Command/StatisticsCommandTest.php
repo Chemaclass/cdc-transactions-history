@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\CroExcelHistory\Infrastructure\Command;
+namespace Tests\Feature\TransactionsHistory\Infrastructure\Command;
 
 use App\TransactionsHistory\TransactionsHistoryFacade;
 use App\TransactionsHistory\Infrastructure\Command\StatisticsCommand;
@@ -20,7 +20,7 @@ final class StatisticsCommandTest extends TestCase
         $this->command = (new TransactionsHistoryFacade())->getStatisticsCommand();
     }
 
-    public function test_statistics_viban_purchase(): void
+    public function test_stats_one_kind(): void
     {
         $output = $this->createMock(OutputInterface::class);
         $output->method('writeln')->withConsecutive(
@@ -30,7 +30,25 @@ final class StatisticsCommandTest extends TestCase
         );
 
         $actual = $this->command->run(
-            new StringInput(__DIR__ . '/Fixtures/mock-transactions-viban-purchase.csv --kind=viban_purchase'),
+            new StringInput(__DIR__ . '/Fixtures/mock-stats_one_kind.csv --kind=viban_purchase'),
+            $output
+        );
+
+        self::assertSame(Command::SUCCESS, $actual);
+    }
+
+    public function test_stats_multiple_kinds(): void
+    {
+        $output = $this->createMock(OutputInterface::class);
+        $output->method('writeln')->withConsecutive(
+            ['crypto_withdrawal: '],
+            ['  BCH: {"total":-0.5,"totalInEuros":200}'],
+            ['viban_purchase: '],
+            ['  BCH: {"totalInEuros":100.1}'],
+        );
+
+        $actual = $this->command->run(
+            new StringInput(__DIR__ . '/Fixtures/mock-stats_multiple_kinds.csv --kind=crypto_withdrawal,viban_purchase'),
             $output
         );
 

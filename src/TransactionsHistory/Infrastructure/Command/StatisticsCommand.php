@@ -63,7 +63,9 @@ final class StatisticsCommand extends Command
         if (!$transactionKind) {
             $this->renderAllTransactionKind($transactionsGroupedByKind);
         } else {
-            $this->renderTransactionKind($transactionsGroupedByKind, $transactionKind);
+            foreach (explode(',', $transactionKind) as $kind) {
+                $this->renderTransactionKind($transactionsGroupedByKind, $kind);
+            }
         }
 
         return self::SUCCESS;

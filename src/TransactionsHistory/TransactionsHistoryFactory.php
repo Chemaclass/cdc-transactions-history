@@ -7,6 +7,7 @@ namespace App\TransactionsHistory;
 use App\TransactionsHistory\Domain\Mapper\CsvHeadersTransactionMapper;
 use App\TransactionsHistory\Domain\Mapper\TransactionMapperInterface;
 use App\TransactionsHistory\Domain\Service\StatisticsService;
+use App\TransactionsHistory\Domain\TransactionManager\CryptoWithdrawalTransactionManager;
 use App\TransactionsHistory\Domain\TransactionManager\TransactionManagerInterface;
 use App\TransactionsHistory\Domain\TransactionManager\VIbanPurchaseTransactionManager;
 use App\TransactionsHistory\Domain\Transfer\TransactionKind;
@@ -49,6 +50,7 @@ final class TransactionsHistoryFactory extends AbstractFactory
     {
         return [
             TransactionKind::VIBAN_PURCHASE => new VIbanPurchaseTransactionManager(),
+            TransactionKind::CRYPTO_WITHDRAWAL => new CryptoWithdrawalTransactionManager(),
         ];
     }
 }
