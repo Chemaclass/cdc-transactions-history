@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit\CroExcelHistory\Service;
 
-use App\CroExcelHistory\Service\GroupedTransactions;
+use App\CroExcelHistory\Mapper\TransactionMapper;
 use App\CroExcelHistory\Service\StatisticsService;
-use App\CroExcelHistory\Service\TransactionMapper;
 use App\CroExcelHistory\TransactionManager\TransactionManagerInterface;
 use App\CroExcelHistory\Transfer\TransactionKind;
 use PHPUnit\Framework\TestCase;
@@ -34,7 +33,6 @@ final class StatisticsServiceTest extends TestCase
         $withdrawalManager->method('manageTransactions')->willReturn(['withdrawal' => 'manager']);
 
         $stats = new StatisticsService(
-            new GroupedTransactions(),
             new TransactionMapper(),
             [
                 TransactionKind::VIBAN_PURCHASE => $purchaseManager,

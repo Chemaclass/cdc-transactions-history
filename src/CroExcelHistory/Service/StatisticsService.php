@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace App\CroExcelHistory\Service;
 
+use App\CroExcelHistory\Mapper\TransactionMapperInterface;
 use App\CroExcelHistory\TransactionManager\NullTransactionManager;
 use App\CroExcelHistory\TransactionManager\TransactionManagerInterface;
 use App\CroExcelHistory\Transfer\Transaction;
 
 final class StatisticsService
 {
-    private GroupedTransactions $groupedTransactions;
-
-    private TransactionMapper $transactionMapper;
+    private TransactionMapperInterface $transactionMapper;
 
     /** @var array<string,TransactionManagerInterface> */
     private array $transactionManagers;
@@ -21,11 +20,9 @@ final class StatisticsService
      * @param array<string,TransactionManagerInterface> $transactionManagers
      */
     public function __construct(
-        GroupedTransactions $groupedTransactions,
-        TransactionMapper $transactionMapper,
+        TransactionMapperInterface $transactionMapper,
         array $transactionManagers
     ) {
-        $this->groupedTransactions = $groupedTransactions;
         $this->transactionMapper = $transactionMapper;
         $this->transactionManagers = $transactionManagers;
     }
@@ -50,11 +47,18 @@ final class StatisticsService
     private function generateGroupedTransactions(array $csv): array
     {
         $transactions = array_map(
-            fn (array $row): Transaction => $this->transactionMapper->map($row),
+            fn(array $row): Transaction => $this->transactionMapper->map($row),
             $csv
         );
 
-        return $this->groupedTransactions->byKind(...$transactions);
+        $result = [];
+
+        foreach ($transactions as $transaction) {
+            $result[$transaction->getTransactionKind()] ??= [];
+            $result[$transaction->getTransactionKind()][] = $transaction;
+        }
+
+        return $result;
     }
 
     /**

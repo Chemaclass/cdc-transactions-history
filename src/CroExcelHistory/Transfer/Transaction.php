@@ -24,25 +24,6 @@ final class Transaction
 
     private string $transactionKind = '';
 
-    /**
-     * @param array<string,null|string> $array
-     */
-    public static function fromArray(array $array): self
-    {
-        $self = new self();
-        $self->timestampUtc = $array['Timestamp (UTC)'] ?? '';
-        $self->transactionDescription = $array['Transaction Description'] ?? '';
-        $self->currency = $array['Currency'] ?? '';
-        $self->amount = (float) ($array['Amount'] ?? '');
-        $self->toCurrency = $array['To Currency'] ?? '';
-        $self->toAmount = (float) ($array['To Amount'] ?? '');
-        $self->nativeCurrency = $array['Native Currency'] ?? '';
-        $self->nativeAmount = (float) ($array['Native Amount'] ?? '');
-        $self->transactionKind = $array['Transaction Kind'] ?? '';
-
-        return $self;
-    }
-
     public function getTimestampUtc(): string
     {
         return $this->timestampUtc;
