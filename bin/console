@@ -3,7 +3,7 @@
 
 declare(strict_types=1);
 
-use App\CroExcelHistory\CroExcelHistoryFacade;
+use App\TransactionsHistory\TransactionsHistoryFacade;
 use Gacela\Framework\Gacela;
 use Symfony\Component\Console\Application;
 
@@ -16,7 +16,7 @@ require $autoloadPath;
 
 Gacela::bootstrap($cwd);
 
-$croExcelHistoryFacade = new CroExcelHistoryFacade();
+$croExcelHistoryFacade = new TransactionsHistoryFacade();
 
 $application = new Application();
 $application->add($croExcelHistoryFacade->getStatisticsCommand());

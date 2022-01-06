@@ -1,13 +1,13 @@
-# CRO Excel History
+# CDC Transactions History
 
 [![MIT Software License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 This is a pet project to calculate interesting data from the resulting export file of the history transactions from the
-Crypto.com app. For example, how much investment have you put into a particular ticker 
+Crypto.com app. For example, how much investment have you put into a particular ticker.
 
 ### Commands
 
-- [stats](src/CroExcelHistory/Infrastructure/Command/StatisticsCommand.php):
+- [stats](src/TransactionsHistory/Infrastructure/Command/StatisticsCommand.php):
     - `php bin/console stats data/transactions.csv --kind=viban_purchase --ticker=ETH,ADA`
     - Options
         - `kind`: filter by transaction kind
@@ -15,5 +15,5 @@ Crypto.com app. For example, how much investment have you put into a particular 
 
 ## How does it work
 
-1. Add your transactions.csv file inside the `data/` folder.
-2. You can see the mapping of the transaction managers by kind in `CroExcelHistoryFactory::createTransactionManagers()`.
+1. Add your `transactions.csv` file inside the `data/` folder.
+2. The mapping of the transaction managers by kind is in `TransactionsHistoryFactory::createTransactionManagers()`.
