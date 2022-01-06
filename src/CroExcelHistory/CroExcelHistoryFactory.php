@@ -6,6 +6,7 @@ namespace App\CroExcelHistory;
 
 use App\CroExcelHistory\Service\GroupedTransactions;
 use App\CroExcelHistory\Service\StatisticsService;
+use App\CroExcelHistory\Service\TransactionMapper;
 use App\CroExcelHistory\TransactionManager\TransactionManagerInterface;
 use App\CroExcelHistory\TransactionManager\VIbanPurchaseTransactionManager;
 use App\CroExcelHistory\Transfer\TransactionKind;
@@ -17,6 +18,7 @@ final class CroExcelHistoryFactory extends AbstractFactory
     {
         return new StatisticsService(
             $this->createGroupedTransactions(),
+            $this->createTransactionMapper(),
             $this->createTransactionManagers()
         );
     }
@@ -24,6 +26,11 @@ final class CroExcelHistoryFactory extends AbstractFactory
     private function createGroupedTransactions(): GroupedTransactions
     {
         return new GroupedTransactions();
+    }
+
+    private function createTransactionMapper(): TransactionMapper
+    {
+        return new TransactionMapper();
     }
 
     /**

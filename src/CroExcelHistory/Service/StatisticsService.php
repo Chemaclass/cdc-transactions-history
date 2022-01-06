@@ -12,15 +12,21 @@ final class StatisticsService
 {
     private GroupedTransactions $groupedTransactions;
 
+    private TransactionMapper $transactionMapper;
+
     /** @var array<string,TransactionManagerInterface> */
     private array $transactionManagers;
 
     /**
      * @param array<string,TransactionManagerInterface> $transactionManagers
      */
-    public function __construct(GroupedTransactions $groupedTransactions, array $transactionManagers)
-    {
+    public function __construct(
+        GroupedTransactions $groupedTransactions,
+        TransactionMapper $transactionMapper,
+        array $transactionManagers
+    ) {
         $this->groupedTransactions = $groupedTransactions;
+        $this->transactionMapper = $transactionMapper;
         $this->transactionManagers = $transactionManagers;
     }
 
@@ -43,7 +49,10 @@ final class StatisticsService
      */
     private function generateGroupedTransactions(array $csv): array
     {
-        $transactions = array_map(static fn (array $row) => Transaction::fromArray($row), $csv);
+        $transactions = array_map(
+            fn (array $row): Transaction => $this->transactionMapper->map($row),
+            $csv
+        );
 
         return $this->groupedTransactions->byKind(...$transactions);
     }

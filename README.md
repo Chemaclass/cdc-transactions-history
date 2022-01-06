@@ -7,7 +7,7 @@ Crypto.com app.
 
 ## Example
 
-The `example/cli.php` script shows you an example of how does it works.
+The `example/cli.php` script shows you an example of how does it work.
 
 ## How does it work
 
