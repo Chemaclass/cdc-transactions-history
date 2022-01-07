@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Unit\TransactionsHistory\Domain\Service;
 
+use App\TransactionsHistory\Domain\IO\FileReaderServiceInterface;
 use App\TransactionsHistory\Domain\Mapper\TransactionMapperInterface;
 use App\TransactionsHistory\Domain\Service\StatisticsService;
 use App\TransactionsHistory\Domain\TransactionManager\TransactionManagerInterface;
 use App\TransactionsHistory\Domain\Transfer\Transaction;
 use App\TransactionsHistory\Domain\Transfer\TransactionKind;
-use App\TransactionsHistory\Infrastructure\IO\FileReaderServiceInterface;
 use PHPUnit\Framework\TestCase;
 
 final class StatisticsServiceTest extends TestCase

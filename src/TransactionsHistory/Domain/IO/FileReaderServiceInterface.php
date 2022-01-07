@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\TransactionsHistory\Infrastructure\IO;
+namespace App\TransactionsHistory\Domain\IO;
 
 interface FileReaderServiceInterface
 {

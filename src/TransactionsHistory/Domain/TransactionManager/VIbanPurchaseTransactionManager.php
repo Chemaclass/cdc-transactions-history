@@ -17,9 +17,11 @@ final class VIbanPurchaseTransactionManager implements TransactionManagerInterfa
 
         foreach ($transactions as $transaction) {
             $result[$transaction->getToCurrency()] ??= [
+                'total' => 0,
                 'totalInEuros' => 0,
             ];
 
+            $result[$transaction->getToCurrency()]['total'] += $transaction->getToAmount();
             $result[$transaction->getToCurrency()]['totalInEuros'] += $transaction->getNativeAmount();
         }
 

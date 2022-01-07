@@ -11,6 +11,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+
 use function Safe\json_encode;
 use function Safe\sprintf;
 
@@ -35,7 +36,12 @@ final class StatisticsCommand extends Command
     protected function configure(): void
     {
         $this->setDescription('Get interesting data from your transactions history group by transactions kind.')
-            ->addArgument('path', InputArgument::OPTIONAL, 'The csv file path where the transactions are.', self::DEFAULT_PATH)
+            ->addArgument(
+                'path',
+                InputArgument::OPTIONAL,
+                'The csv file path where the transactions are.',
+                self::DEFAULT_PATH
+            )
             ->addOption('kind', null, InputArgument::OPTIONAL, 'Filter by transaction kind')
             ->addOption('ticker', null, InputArgument::OPTIONAL, 'Filter by ticker');
     }
@@ -98,11 +104,13 @@ final class StatisticsCommand extends Command
             : array_keys($transactionsGroupedByKind[$transactionKind]);
 
         foreach ($tickers as $ticker) {
-            $this->output->writeln(sprintf(
+            $line = sprintf(
                 '  %s: %s',
                 str_pad($ticker, $maxTickerLength),
                 json_encode($transactionsGroupedByKind[$transactionKind][$ticker] ?? 'null')
-            ));
+            );
+
+            $this->output->writeln($line);
         }
     }
 

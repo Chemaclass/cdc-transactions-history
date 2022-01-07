@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\TransactionsHistory;
 
+use App\TransactionsHistory\Domain\IO\FileReaderServiceInterface;
 use App\TransactionsHistory\Domain\Mapper\TransactionMapperInterface;
 use App\TransactionsHistory\Domain\Service\StatisticsService;
 use App\TransactionsHistory\Domain\TransactionManager\CryptoWithdrawalTransactionManager;
@@ -12,7 +13,6 @@ use App\TransactionsHistory\Domain\TransactionManager\VIbanPurchaseTransactionMa
 use App\TransactionsHistory\Domain\Transfer\TransactionKind;
 use App\TransactionsHistory\Infrastructure\Command\StatisticsCommand;
 use App\TransactionsHistory\Infrastructure\IO\CsvReaderService;
-use App\TransactionsHistory\Infrastructure\IO\FileReaderServiceInterface;
 use App\TransactionsHistory\Infrastructure\Mapper\CsvHeadersTransactionMapper;
 use Gacela\Framework\AbstractFactory;
 

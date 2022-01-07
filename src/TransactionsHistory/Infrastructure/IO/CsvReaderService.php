@@ -4,19 +4,21 @@ declare(strict_types=1);
 
 namespace App\TransactionsHistory\Infrastructure\IO;
 
+use App\TransactionsHistory\Domain\IO\FileReaderServiceInterface;
 use Safe\Exceptions\ArrayException;
 use Safe\Exceptions\FilesystemException;
+
 use function Safe\array_combine;
 use function Safe\file;
 
 final class CsvReaderService implements FileReaderServiceInterface
 {
     /**
-     * @throws ArrayException|FilesystemException
-     *
      * @return list<array<string,string>>
      *
      * @psalm-suppress InvalidReturnType, InvalidReturnStatement
+     * @throws ArrayException|FilesystemException
+     *
      */
     public function read(string $filePath): array
     {

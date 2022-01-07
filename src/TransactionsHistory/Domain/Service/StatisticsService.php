@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\TransactionsHistory\Domain\Service;
 
+use App\TransactionsHistory\Domain\IO\FileReaderServiceInterface;
 use App\TransactionsHistory\Domain\Mapper\TransactionMapperInterface;
 use App\TransactionsHistory\Domain\TransactionManager\NullTransactionManager;
 use App\TransactionsHistory\Domain\TransactionManager\TransactionManagerInterface;
 use App\TransactionsHistory\Domain\Transfer\Transaction;
-use App\TransactionsHistory\Infrastructure\IO\FileReaderServiceInterface;
 
 final class StatisticsService
 {
@@ -25,7 +25,7 @@ final class StatisticsService
     public function __construct(
         FileReaderServiceInterface $fileReaderService,
         TransactionMapperInterface $transactionMapper,
-        array                      $transactionManagers
+        array $transactionManagers
     ) {
         $this->fileReaderService = $fileReaderService;
         $this->transactionMapper = $transactionMapper;
