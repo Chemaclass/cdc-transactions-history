@@ -15,23 +15,19 @@ final class CryptoWithdrawalTransactionManagerTest extends TestCase
         $transactions = [
             (new Transaction())->setCurrency('BCH')->setAmount(1)->setNativeAmount(10),
             (new Transaction())->setCurrency('DOT')->setAmount(2)->setNativeAmount(20.2),
-            (new Transaction())->setCurrency('ADA')->setAmount(3)->setNativeAmount(30.33),
+            (new Transaction())->setCurrency('BCH')->setAmount(3)->setNativeAmount(30.33),
         ];
 
         $manager = new CryptoWithdrawalTransactionManager();
 
         self::assertSame([
             'BCH' => [
-                'total' => 1.0,
-                'totalInEuros' => 10.0,
+                'total' => 4.0,
+                'totalInEuros' => 40.33,
             ],
             'DOT' => [
                 'total' => 2.0,
                 'totalInEuros' => 20.2,
-            ],
-            'ADA' => [
-                'total' => 3.0,
-                'totalInEuros' => 30.33,
             ],
         ], $manager->manageTransactions(...$transactions));
     }

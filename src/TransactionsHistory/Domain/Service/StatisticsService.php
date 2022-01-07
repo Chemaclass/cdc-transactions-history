@@ -76,15 +76,10 @@ final class StatisticsService
         $result = [];
 
         foreach ($groupedTransactions as $kind => $transactions) {
-            $manager = $this->getManagerByKind($kind);
+            $manager = $this->transactionManagers[$kind] ?? new NullTransactionManager();
             $result[$kind] = $manager->manageTransactions(...$transactions);
         }
 
         return $result;
-    }
-
-    private function getManagerByKind(string $kind): TransactionManagerInterface
-    {
-        return $this->transactionManagers[$kind] ?? new NullTransactionManager();
     }
 }

@@ -15,20 +15,17 @@ final class VIbanPurchaseTransactionManagerTest extends TestCase
         $transactions = [
             (new Transaction())->setToCurrency('BCH')->setNativeAmount(10),
             (new Transaction())->setToCurrency('DOT')->setNativeAmount(20.2),
-            (new Transaction())->setToCurrency('ADA')->setNativeAmount(30.33),
+            (new Transaction())->setToCurrency('BCH')->setNativeAmount(30.33),
         ];
 
         $manager = new VIbanPurchaseTransactionManager();
 
         self::assertSame([
             'BCH' => [
-                'totalInEuros' => 10.0,
+                'totalInEuros' => 40.33,
             ],
             'DOT' => [
                 'totalInEuros' => 20.2,
-            ],
-            'ADA' => [
-                'totalInEuros' => 30.33,
             ],
         ], $manager->manageTransactions(...$transactions));
     }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\TransactionsHistory;
 
-use App\TransactionsHistory\Domain\Mapper\CsvHeadersTransactionMapper;
 use App\TransactionsHistory\Domain\Mapper\TransactionMapperInterface;
 use App\TransactionsHistory\Domain\Service\StatisticsService;
 use App\TransactionsHistory\Domain\TransactionManager\CryptoWithdrawalTransactionManager;
@@ -13,6 +12,8 @@ use App\TransactionsHistory\Domain\TransactionManager\VIbanPurchaseTransactionMa
 use App\TransactionsHistory\Domain\Transfer\TransactionKind;
 use App\TransactionsHistory\Infrastructure\Command\StatisticsCommand;
 use App\TransactionsHistory\Infrastructure\IO\CsvReaderService;
+use App\TransactionsHistory\Infrastructure\IO\FileReaderServiceInterface;
+use App\TransactionsHistory\Infrastructure\Mapper\CsvHeadersTransactionMapper;
 use Gacela\Framework\AbstractFactory;
 
 final class TransactionsHistoryFactory extends AbstractFactory
@@ -27,13 +28,13 @@ final class TransactionsHistoryFactory extends AbstractFactory
     private function createStatisticsService(): StatisticsService
     {
         return new StatisticsService(
-            $this->createCsvReaderService(),
+            $this->createFileReaderService(),
             $this->createTransactionMapper(),
             $this->createTransactionManagers()
         );
     }
 
-    private function createCsvReaderService(): CsvReaderService
+    private function createFileReaderService(): FileReaderServiceInterface
     {
         return new CsvReaderService();
     }

@@ -20,8 +20,6 @@ final class StatisticsCommand extends Command
 
     private StatisticsService $statisticsService;
 
-    private int $maxTickerLength = 3;
-
     /** @psalm-suppress PropertyNotSetInConstructor */
     private InputInterface $input;
 
@@ -55,7 +53,6 @@ final class StatisticsCommand extends Command
 
         /** @var array<string,array<string,mixed>> */
         $transactionsGroupedByKind = $this->statisticsService->forFilepath($path);
-        $this->calculateMaxTickerLength($transactionsGroupedByKind);
 
         /** @var null|string $transactionKind */
         $transactionKind = $input->getOption('kind');
@@ -90,9 +87,11 @@ final class StatisticsCommand extends Command
      */
     private function renderTransactionKind(array $transactionsGroupedByKind, string $transactionKind): void
     {
-        $this->output->writeln("$transactionKind: ");
+        $this->output->writeln("$transactionKind:");
         /** @var null|string $ticker */
         $ticker = $this->input->getOption('ticker');
+
+        $maxTickerLength = $this->calculateMaxTickerLength($transactionsGroupedByKind[$transactionKind]);
 
         $tickers = ($ticker)
             ? explode(',', $ticker)
@@ -101,25 +100,26 @@ final class StatisticsCommand extends Command
         foreach ($tickers as $ticker) {
             $this->output->writeln(sprintf(
                 '  %s: %s',
-                str_pad($ticker, $this->maxTickerLength),
-                json_encode($transactionsGroupedByKind[$transactionKind][$ticker])
+                str_pad($ticker, $maxTickerLength),
+                json_encode($transactionsGroupedByKind[$transactionKind][$ticker] ?? 'null')
             ));
         }
     }
 
     /**
-     * @param array<string,array<string,mixed>> $transactionsGroupedByKind
+     * @param array<string,mixed> $groupedTransactions
      */
-    private function calculateMaxTickerLength(array $transactionsGroupedByKind): void
+    private function calculateMaxTickerLength(array $groupedTransactions): int
     {
-        $firstNonEmptyGroup = array_filter($transactionsGroupedByKind);
-
+        if (empty($groupedTransactions)) {
+            return 0;
+        }
         /** @var non-empty-list<int> $tickerLengths */
         $tickerLengths = array_map(
-            static fn(string $k): int => mb_strlen($k),// @phpstan-ignore-line
-            array_keys(reset($firstNonEmptyGroup)) // @phpstan-ignore-line
+            static fn(string $k): int => mb_strlen($k),
+            array_keys($groupedTransactions)
         );
 
-        $this->maxTickerLength = max($tickerLengths);
+        return max($tickerLengths);
     }
 }

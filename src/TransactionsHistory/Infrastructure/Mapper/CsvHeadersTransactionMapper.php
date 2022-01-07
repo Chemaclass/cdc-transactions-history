@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\TransactionsHistory\Domain\Mapper;
+namespace App\TransactionsHistory\Infrastructure\Mapper;
 
+use App\TransactionsHistory\Domain\Mapper\TransactionMapperInterface;
 use App\TransactionsHistory\Domain\Transfer\Transaction;
 
 final class CsvHeadersTransactionMapper implements TransactionMapperInterface
