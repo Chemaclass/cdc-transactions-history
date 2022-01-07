@@ -14,11 +14,11 @@ use function Safe\file;
 final class CsvReaderService implements FileReaderServiceInterface
 {
     /**
+     * @throws ArrayException|FilesystemException
+     *
      * @return list<array<string,string>>
      *
      * @psalm-suppress InvalidReturnType, InvalidReturnStatement
-     * @throws ArrayException|FilesystemException
-     *
      */
     public function read(string $filePath): array
     {

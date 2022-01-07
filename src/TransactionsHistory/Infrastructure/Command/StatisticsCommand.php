@@ -97,11 +97,11 @@ final class StatisticsCommand extends Command
         /** @var null|string $ticker */
         $ticker = $this->input->getOption('ticker');
 
-        $maxTickerLength = $this->calculateMaxTickerLength($transactionsGroupedByKind[$transactionKind]);
-
         $tickers = ($ticker)
             ? explode(',', $ticker)
             : array_keys($transactionsGroupedByKind[$transactionKind]);
+
+        $maxTickerLength = $this->calculateMaxTickerLength($tickers);
 
         foreach ($tickers as $ticker) {
             $line = sprintf(
@@ -115,17 +115,18 @@ final class StatisticsCommand extends Command
     }
 
     /**
-     * @param array<string,mixed> $groupedTransactions
+     * @param list<string> $tickers
      */
-    private function calculateMaxTickerLength(array $groupedTransactions): int
+    private function calculateMaxTickerLength(array $tickers): int
     {
-        if (empty($groupedTransactions)) {
+        if (empty($tickers)) {
             return 0;
         }
+
         /** @var non-empty-list<int> $tickerLengths */
         $tickerLengths = array_map(
             static fn(string $k): int => mb_strlen($k),
-            array_keys($groupedTransactions)
+            $tickers
         );
 
         return max($tickerLengths);

@@ -25,8 +25,8 @@ final class StatisticsCommandTest extends TestCase
         $output = $this->createMock(OutputInterface::class);
         $output->method('writeln')->withConsecutive(
             ['viban_purchase:'],
-            ['  BCH: {"totalInEuros":203.3}'],
-            ['  ADA: {"totalInEuros":202.2}'],
+            ['  BCH: {"total":1,"totalInEuros":203.3}'],
+            ['  ADA: {"total":2,"totalInEuros":202.2}'],
         );
 
         $actual = $this->command->run(
@@ -44,7 +44,7 @@ final class StatisticsCommandTest extends TestCase
             ['crypto_withdrawal:'],
             ['  BCH: {"total":-0.5,"totalInEuros":200}'],
             ['viban_purchase:'],
-            ['  BCH: {"totalInEuros":100.1}'],
+            ['  BCH: {"total":0.5,"totalInEuros":100.1}'],
         );
 
         $actual = $this->command->run(

@@ -13,18 +13,20 @@ final class VIbanPurchaseTransactionManagerTest extends TestCase
     public function test_manage_transactions(): void
     {
         $transactions = [
-            (new Transaction())->setToCurrency('BCH')->setNativeAmount(10),
-            (new Transaction())->setToCurrency('DOT')->setNativeAmount(20.2),
-            (new Transaction())->setToCurrency('BCH')->setNativeAmount(30.33),
+            (new Transaction())->setToCurrency('BCH')->setToAmount(1)->setNativeAmount(10),
+            (new Transaction())->setToCurrency('DOT')->setToAmount(2)->setNativeAmount(20.2),
+            (new Transaction())->setToCurrency('BCH')->setToAmount(3)->setNativeAmount(30.33),
         ];
 
         $manager = new VIbanPurchaseTransactionManager();
 
         self::assertSame([
             'BCH' => [
+                'total' => 4.0,
                 'totalInEuros' => 40.33,
             ],
             'DOT' => [
+                'total' => 2.0,
                 'totalInEuros' => 20.2,
             ],
         ], $manager->manageTransactions(...$transactions));
