@@ -6,7 +6,7 @@ namespace App\TransactionsHistory\Domain\TransactionManager;
 
 use App\TransactionsHistory\Domain\Transfer\Transaction;
 
-final class VIbanPurchaseTransactionManager implements TransactionManagerInterface
+final class ToCurrencyTransactionManager implements TransactionManagerInterface
 {
     /**
      * @return array<string,array<string,mixed>>

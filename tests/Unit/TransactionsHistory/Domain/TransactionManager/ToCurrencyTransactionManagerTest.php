@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace Tests\Unit\TransactionsHistory\Domain\TransactionManager;
 
-use App\TransactionsHistory\Domain\TransactionManager\CryptoPurchaseTransactionManager;
+use App\TransactionsHistory\Domain\TransactionManager\ToCurrencyTransactionManager;
 use App\TransactionsHistory\Domain\Transfer\Transaction;
 use PHPUnit\Framework\TestCase;
 
-final class CryptoPurchaseTransactionManagerTest extends TestCase
+final class ToCurrencyTransactionManagerTest extends TestCase
 {
     public function test_manage_transactions(): void
     {
         $transactions = [
-            (new Transaction())->setCurrency('BCH')->setAmount(1)->setNativeAmount(10),
-            (new Transaction())->setCurrency('DOT')->setAmount(2)->setNativeAmount(20.2),
-            (new Transaction())->setCurrency('BCH')->setAmount(3)->setNativeAmount(30.33),
+            (new Transaction())->setToCurrency('BCH')->setToAmount(1)->setNativeAmount(10),
+            (new Transaction())->setToCurrency('DOT')->setToAmount(2)->setNativeAmount(20.2),
+            (new Transaction())->setToCurrency('BCH')->setToAmount(3)->setNativeAmount(30.33),
         ];
 
-        $manager = new CryptoPurchaseTransactionManager();
+        $manager = new ToCurrencyTransactionManager();
 
         self::assertSame([
             'BCH' => [

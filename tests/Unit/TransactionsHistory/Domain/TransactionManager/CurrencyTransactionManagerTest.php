@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Unit\TransactionsHistory\Domain\TransactionManager;
 
-use App\TransactionsHistory\Domain\TransactionManager\CryptoWithdrawalTransactionManager;
+use App\TransactionsHistory\Domain\TransactionManager\CurrencyTransactionManager;
 use App\TransactionsHistory\Domain\Transfer\Transaction;
 use PHPUnit\Framework\TestCase;
 
-final class CryptoWithdrawalTransactionManagerTest extends TestCase
+final class CurrencyTransactionManagerTest extends TestCase
 {
     public function test_manage_transactions(): void
     {
@@ -18,7 +18,7 @@ final class CryptoWithdrawalTransactionManagerTest extends TestCase
             (new Transaction())->setCurrency('BCH')->setAmount(3)->setNativeAmount(30.33),
         ];
 
-        $manager = new CryptoWithdrawalTransactionManager();
+        $manager = new CurrencyTransactionManager();
 
         self::assertSame([
             'BCH' => [

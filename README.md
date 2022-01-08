@@ -23,12 +23,12 @@ practicing TDD and some software architecture decisions just for fun.
 2. The mapping of the transaction managers by kind is in `TransactionsHistoryFactory::createTransactionManagers()`.
 
 ```php
-private function createTransactionManagers(): array
+private function createTransactionManagers(): TransactionManagers
 {
-    return [
-        TransactionKind::VIBAN_PURCHASE => new VIbanPurchaseTransactionManager(),
-        // ... etc
-    ];
+    return (new TransactionManagers())
+        ->add(TransactionKind::CRYPTO_EXCHANGE, new ToCurrencyTransactionManager())
+        ->add(TransactionKind::CRYPTO_PURCHASE, new CurrencyTransactionManager())
+        // ...
 }
 ```
 
@@ -39,13 +39,5 @@ In this function you can map what transaction manager do you want to use for eac
 - [stats](src/TransactionsHistory/Infrastructure/Command/StatisticsCommand.php):
     - `php bin/console stats data/transactions.csv --kind=viban_purchase --ticker=ETH,ADA`
     - Options
-        - `kind`: filter by transaction kind
-        - `ticker`: filter by ticker
-
----
-
-#### Future ideas
-
-- Other "transaction managers" for other transaction kinds.
-- Maybe allow multiple "transaction managers" for one transaction kind.
-- ...
+        - `kind`: filter by transaction kind (optional; allowed multiple)
+        - `ticker`: filter by ticker (optional; allowed multiple)
