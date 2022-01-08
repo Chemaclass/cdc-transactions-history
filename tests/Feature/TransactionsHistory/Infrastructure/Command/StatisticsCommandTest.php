@@ -34,7 +34,7 @@ final class StatisticsCommandTest extends TestCase
     {
         $output = $this->createMock(OutputInterface::class);
         $output->method('writeln')->withConsecutive(
-            ['<error>  not found</error>'],
+            ['<info>No transactions found with that criteria</info>'],
         );
 
         $actual = $this->command->run(

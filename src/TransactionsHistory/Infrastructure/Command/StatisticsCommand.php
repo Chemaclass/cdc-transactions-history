@@ -28,6 +28,9 @@ final class StatisticsCommand extends Command
     /** @psalm-suppress PropertyNotSetInConstructor */
     private OutputInterface $output;
 
+    /** @var list<list<string>> */
+    private array $linesBuffer = [];
+
     public function __construct(StatisticsService $statisticsService)
     {
         parent::__construct('stats');
@@ -64,12 +67,16 @@ final class StatisticsCommand extends Command
         /** @var null|string $transactionKind */
         $transactionKind = $input->getOption('kind');
 
-        if (!$transactionKind) {
-            $this->renderAllTransactionKind($transactionsGroupedByKind);
+        $transactionKinds = ($transactionKind)
+            ? explode(',', $transactionKind)
+            : array_keys($transactionsGroupedByKind);
+
+        $this->addTransactionKindsToBuffer($transactionsGroupedByKind, $transactionKinds);
+
+        if (empty($this->linesBuffer)) {
+            $this->renderNoTransactionsFound();
         } else {
-            foreach (explode(',', $transactionKind) as $kind) {
-                $this->renderTransactionKind($transactionsGroupedByKind, $kind);
-            }
+            $this->renderLinesBuffer();
         }
 
         return self::SUCCESS;
@@ -77,13 +84,14 @@ final class StatisticsCommand extends Command
 
     /**
      * @param array<string,array<string,mixed>> $transactionsGroupedByKind
+     * @param list<string>                      $kinds
      *
      * @throws JsonException|StringsException
      */
-    private function renderAllTransactionKind(array $transactionsGroupedByKind): void
+    private function addTransactionKindsToBuffer(array $transactionsGroupedByKind, array $kinds): void
     {
-        foreach (array_keys($transactionsGroupedByKind) as $transactionKind) {
-            $this->renderTransactionKind($transactionsGroupedByKind, $transactionKind);
+        foreach ($kinds as $kind) {
+            $this->addTransactionKindToBuffer($transactionsGroupedByKind, $kind);
         }
     }
 
@@ -92,7 +100,7 @@ final class StatisticsCommand extends Command
      *
      * @throws JsonException|StringsException
      */
-    private function renderTransactionKind(array $transactionsGroupedByKind, string $transactionKind): void
+    private function addTransactionKindToBuffer(array $transactionsGroupedByKind, string $transactionKind): void
     {
         /** @var null|string $ticker */
         $ticker = $this->input->getOption('ticker');
@@ -102,7 +110,7 @@ final class StatisticsCommand extends Command
             : array_keys($transactionsGroupedByKind[$transactionKind] ?? []);
 
         if (empty($tickers)) {
-            $this->output->writeln('<error>  not found</error>');
+            return;
         }
 
         $maxTickerLength = $this->calculateMaxTickerLength($tickers);
@@ -123,8 +131,8 @@ final class StatisticsCommand extends Command
         }
 
         if ($lines) {
-            $this->output->writeln("<comment>$transactionKind:</comment>");
-            $this->output->writeln($lines);
+            array_unshift($lines, "<comment>$transactionKind:</comment>");
+            $this->linesBuffer[] = $lines;
         }
     }
 
@@ -144,5 +152,24 @@ final class StatisticsCommand extends Command
         );
 
         return max($tickerLengths);
+    }
+
+    private function renderNoTransactionsFound(): void
+    {
+        $this->output->writeln('<info>No transactions found with that criteria</info>');
+        $this->output->writeln(
+            sprintf(
+                '  --kind:%s, --ticker=%s',
+                $this->input->getOption('kind') ?: 'empty',
+                $this->input->getOption('ticker') ?: 'empty'
+            )
+        );
+    }
+
+    private function renderLinesBuffer(): void
+    {
+        foreach ($this->linesBuffer as $line) {
+            $this->output->writeln($line);
+        }
     }
 }
