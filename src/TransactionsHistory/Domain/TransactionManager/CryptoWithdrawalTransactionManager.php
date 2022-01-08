@@ -16,13 +16,15 @@ final class CryptoWithdrawalTransactionManager implements TransactionManagerInte
         $result = [];
 
         foreach ($transactions as $transaction) {
-            $result[$transaction->getCurrency()] ??= [
+            $currency = $transaction->getCurrency();
+
+            $result[$currency] ??= [
                 'total' => 0,
                 'totalInEuros' => 0,
             ];
 
-            $result[$transaction->getCurrency()]['total'] += $transaction->getAmount();
-            $result[$transaction->getCurrency()]['totalInEuros'] += $transaction->getNativeAmount();
+            $result[$currency]['total'] += $transaction->getAmount();
+            $result[$currency]['totalInEuros'] += $transaction->getNativeAmount();
         }
 
         return $result;
