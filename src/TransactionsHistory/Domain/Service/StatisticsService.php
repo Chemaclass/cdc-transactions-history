@@ -8,6 +8,9 @@ use App\TransactionsHistory\Domain\IO\FileReaderServiceInterface;
 use App\TransactionsHistory\Domain\Mapper\TransactionMapperInterface;
 use App\TransactionsHistory\Domain\Transfer\Transaction;
 use App\TransactionsHistory\Domain\Transfer\TransactionManagers;
+use Safe\Exceptions\ArrayException;
+
+use function Safe\ksort;
 
 final class StatisticsService
 {
@@ -28,6 +31,8 @@ final class StatisticsService
     }
 
     /**
+     * @throws ArrayException
+     *
      * @return array<string,array<string,mixed>>
      */
     public function forFilepath(string $filepath): array
@@ -64,6 +69,8 @@ final class StatisticsService
     /**
      * @param array<string,list<Transaction>> $groupedTransactions
      *
+     * @throws ArrayException
+     *
      * @return array<string,array<string,mixed>>
      */
     private function manageTransactions(array $groupedTransactions): array
@@ -74,6 +81,8 @@ final class StatisticsService
             $manager = $this->transactionManagers->get($kind);
             $result[$kind] = $manager->manageTransactions(...$transactions);
         }
+
+        ksort($result);
 
         return $result;
     }

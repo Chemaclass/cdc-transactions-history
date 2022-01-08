@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\TransactionsHistory\Infrastructure\Command;
 
 use App\TransactionsHistory\Domain\Service\StatisticsService;
+use Safe\Exceptions\ArrayException;
 use Safe\Exceptions\JsonException;
 use Safe\Exceptions\StringsException;
 use Symfony\Component\Console\Command\Command;
@@ -47,7 +48,7 @@ final class StatisticsCommand extends Command
     }
 
     /**
-     * @throws JsonException|StringsException
+     * @throws ArrayException|JsonException|StringsException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
