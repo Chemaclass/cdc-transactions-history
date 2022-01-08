@@ -14,7 +14,7 @@ final class ToCurrencyAggregatorTest extends TestCase
 
     public function setUp(): void
     {
-        $this->aggregator = new ToCurrencyAggregator();
+        $this->aggregator = new ToCurrencyAggregator(1, 2);
     }
 
     public function test_manage_transactions(): void
@@ -27,11 +27,11 @@ final class ToCurrencyAggregatorTest extends TestCase
 
         self::assertSame([
             'BCH' => [
-                'total' => '4.00000000',
+                'total' => '4.0',
                 'totalInEuros' => '40.33',
             ],
             'DOT' => [
-                'total' => '2.00000000',
+                'total' => '2.0',
                 'totalInEuros' => '20.20',
             ],
         ], $this->aggregator->aggregate(...$transactions));

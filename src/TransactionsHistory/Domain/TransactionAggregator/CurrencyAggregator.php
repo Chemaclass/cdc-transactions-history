@@ -8,6 +8,16 @@ use App\TransactionsHistory\Domain\Transfer\Transaction;
 
 final class CurrencyAggregator implements TransactionAggregatorInterface
 {
+    private int $totalDecimals;
+
+    private int $totalNativeDecimals;
+
+    public function __construct(int $totalDecimals, int $totalNativeDecimals)
+    {
+        $this->totalDecimals = $totalDecimals;
+        $this->totalNativeDecimals = $totalNativeDecimals;
+    }
+
     /**
      * @return array<string,array<string,mixed>>
      */
@@ -24,10 +34,10 @@ final class CurrencyAggregator implements TransactionAggregatorInterface
             ];
 
             $totalAmount = (float) $result[$currency]['total'] + $transaction->getAmount();
-            $result[$currency]['total'] = number_format($totalAmount, 8);
+            $result[$currency]['total'] = number_format($totalAmount, $this->totalDecimals);
 
             $totalAmount = (float) $result[$currency]['totalInEuros'] + $transaction->getNativeAmount();
-            $result[$currency]['totalInEuros'] = number_format($totalAmount, 2);
+            $result[$currency]['totalInEuros'] = number_format($totalAmount, $this->totalNativeDecimals);
         }
 
         return $result;

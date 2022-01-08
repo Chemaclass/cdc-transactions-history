@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Unit\TransactionsHistory\Domain\TransactionAggregator;
 
-use App\TransactionsHistory\Domain\TransactionAggregator\CurrencyAggregator;
+use App\TransactionsHistory\Domain\TransactionAggregator\NullAggregator;
 use App\TransactionsHistory\Domain\Transfer\Transaction;
 use PHPUnit\Framework\TestCase;
 
-final class CurrencyAggregatorTest extends TestCase
+final class NullAggregatorTest extends TestCase
 {
-    private CurrencyAggregator $aggregator;
+    private NullAggregator $aggregator;
 
     public function setUp(): void
     {
-        $this->aggregator = new CurrencyAggregator(1, 2);
+        $this->aggregator = new NullAggregator();
     }
 
     public function test_manage_transactions(): void
@@ -25,15 +25,6 @@ final class CurrencyAggregatorTest extends TestCase
             (new Transaction())->setCurrency('BCH')->setAmount(3)->setNativeAmount(30.33),
         ];
 
-        self::assertSame([
-            'BCH' => [
-                'total' => '4.0',
-                'totalInEuros' => '40.33',
-            ],
-            'DOT' => [
-                'total' => '2.0',
-                'totalInEuros' => '20.20',
-            ],
-        ], $this->aggregator->aggregate(...$transactions));
+        self::assertSame([], $this->aggregator->aggregate(...$transactions));
     }
 }
