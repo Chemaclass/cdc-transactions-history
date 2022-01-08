@@ -6,9 +6,8 @@ namespace App\TransactionsHistory\Domain\Service;
 
 use App\TransactionsHistory\Domain\IO\FileReaderServiceInterface;
 use App\TransactionsHistory\Domain\Mapper\TransactionMapperInterface;
-use App\TransactionsHistory\Domain\TransactionManager\NullTransactionManager;
-use App\TransactionsHistory\Domain\TransactionManager\TransactionManagerInterface;
 use App\TransactionsHistory\Domain\Transfer\Transaction;
+use App\TransactionsHistory\Domain\Transfer\TransactionManagers;
 
 final class StatisticsService
 {
@@ -16,16 +15,12 @@ final class StatisticsService
 
     private TransactionMapperInterface $transactionMapper;
 
-    /** @var array<string,TransactionManagerInterface> */
-    private array $transactionManagers;
+    private TransactionManagers $transactionManagers;
 
-    /**
-     * @param array<string,TransactionManagerInterface> $transactionManagers
-     */
     public function __construct(
         FileReaderServiceInterface $fileReaderService,
         TransactionMapperInterface $transactionMapper,
-        array $transactionManagers
+        TransactionManagers $transactionManagers
     ) {
         $this->fileReaderService = $fileReaderService;
         $this->transactionMapper = $transactionMapper;
@@ -76,7 +71,7 @@ final class StatisticsService
         $result = [];
 
         foreach ($groupedTransactions as $kind => $transactions) {
-            $manager = $this->transactionManagers[$kind] ?? new NullTransactionManager();
+            $manager = $this->transactionManagers->get($kind);
             $result[$kind] = $manager->manageTransactions(...$transactions);
         }
 

@@ -9,51 +9,52 @@ use App\TransactionsHistory\Domain\Mapper\TransactionMapperInterface;
 use App\TransactionsHistory\Domain\Service\StatisticsService;
 use App\TransactionsHistory\Domain\TransactionManager\TransactionManagerInterface;
 use App\TransactionsHistory\Domain\Transfer\Transaction;
-use App\TransactionsHistory\Domain\Transfer\TransactionKind;
+use App\TransactionsHistory\Domain\Transfer\TransactionManagers;
 use PHPUnit\Framework\TestCase;
 
 final class StatisticsServiceTest extends TestCase
 {
-    public function test_for_csv(): void
+    public function test_service_with_multiple_transaction_kinds(): void
     {
         $transactions = [
             [
-                'Transaction Kind' => TransactionKind::VIBAN_PURCHASE,
+                'Transaction Kind Header' => 'transaction kind 1',
             ],
             [
-                'Transaction Kind' => TransactionKind::VIBAN_PURCHASE,
+                'Transaction Kind Header' => 'transaction kind 1',
             ],
             [
-                'Transaction Kind' => TransactionKind::CRYPTO_WITHDRAWAL,
+                'Transaction Kind Header' => 'transaction kind 2',
             ],
         ];
 
         $fileReaderService = $this->createMock(FileReaderServiceInterface::class);
-        $fileReaderService->method('read')->willReturn($transactions);
+        $fileReaderService->method('read')->with('fake-file-path')->willReturn($transactions);
 
         $transactionMapper = $this->createMock(TransactionMapperInterface::class);
         $transactionMapper->method('map')->willReturnCallback(
-            fn(array $row) => (new Transaction())->setTransactionKind($row['Transaction Kind'])
+            fn(array $row) => (new Transaction())->setTransactionKind($row['Transaction Kind Header'])
         );
 
-        $purchaseManager = $this->createMock(TransactionManagerInterface::class);
-        $purchaseManager->method('manageTransactions')->willReturn(['purchase' => 'manager']);
+        $kind1Manager = $this->createMock(TransactionManagerInterface::class);
+        $kind1Manager->method('manageTransactions')->willReturn(['kind 1' => 'manager']);
 
-        $withdrawalManager = $this->createMock(TransactionManagerInterface::class);
-        $withdrawalManager->method('manageTransactions')->willReturn(['withdrawal' => 'manager']);
+        $kind2Manager = $this->createMock(TransactionManagerInterface::class);
+        $kind2Manager->method('manageTransactions')->willReturn(['kind 2' => 'manager']);
 
-        $stats = new StatisticsService(
+        $transactionManagers = (new TransactionManagers())
+            ->add('transaction kind 1', $kind1Manager)
+            ->add('transaction kind 2', $kind2Manager);
+
+        $statisticsService = new StatisticsService(
             $fileReaderService,
             $transactionMapper,
-            [
-                TransactionKind::VIBAN_PURCHASE => $purchaseManager,
-                TransactionKind::CRYPTO_WITHDRAWAL => $withdrawalManager,
-            ]
+            $transactionManagers,
         );
 
         self::assertEquals([
-            TransactionKind::VIBAN_PURCHASE => ['purchase' => 'manager'],
-            TransactionKind::CRYPTO_WITHDRAWAL => ['withdrawal' => 'manager'],
-        ], $stats->forFilepath('file-path'));
+            'transaction kind 1' => ['kind 1' => 'manager'],
+            'transaction kind 2' => ['kind 2' => 'manager'],
+        ], $statisticsService->forFilepath('fake-file-path'));
     }
 }
