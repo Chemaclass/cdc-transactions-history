@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\TransactionsHistory\Domain\TransactionManager;
 
-use App\TransactionsHistory\Domain\TransactionManager\ToCurrencyTransactionManager;
+use App\TransactionsHistory\Domain\TransactionAggregator\ToCurrencyAggregator;
 use App\TransactionsHistory\Domain\Transfer\Transaction;
 use PHPUnit\Framework\TestCase;
 
@@ -18,7 +18,7 @@ final class ToCurrencyTransactionManagerTest extends TestCase
             (new Transaction())->setToCurrency('BCH')->setToAmount(3)->setNativeAmount(30.33),
         ];
 
-        $manager = new ToCurrencyTransactionManager();
+        $manager = new ToCurrencyAggregator();
 
         self::assertSame([
             'BCH' => [
@@ -29,6 +29,6 @@ final class ToCurrencyTransactionManagerTest extends TestCase
                 'total' => 2.0,
                 'totalInEuros' => 20.2,
             ],
-        ], $manager->manageTransactions(...$transactions));
+        ], $manager->aggregate(...$transactions));
     }
 }

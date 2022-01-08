@@ -7,7 +7,7 @@ namespace App\TransactionsHistory\Domain\Service;
 use App\TransactionsHistory\Domain\IO\FileReaderServiceInterface;
 use App\TransactionsHistory\Domain\Mapper\TransactionMapperInterface;
 use App\TransactionsHistory\Domain\Transfer\Transaction;
-use App\TransactionsHistory\Domain\Transfer\TransactionManagers;
+use App\TransactionsHistory\Domain\Transfer\TransactionAggregators;
 use Safe\Exceptions\ArrayException;
 
 use function Safe\ksort;
@@ -18,16 +18,16 @@ final class StatisticsService
 
     private TransactionMapperInterface $transactionMapper;
 
-    private TransactionManagers $transactionManagers;
+    private TransactionAggregators $transactionAggregators;
 
     public function __construct(
         FileReaderServiceInterface $fileReaderService,
         TransactionMapperInterface $transactionMapper,
-        TransactionManagers $transactionManagers
+        TransactionAggregators $transactionAggregators
     ) {
         $this->fileReaderService = $fileReaderService;
         $this->transactionMapper = $transactionMapper;
-        $this->transactionManagers = $transactionManagers;
+        $this->transactionAggregators = $transactionAggregators;
     }
 
     /**
@@ -78,8 +78,8 @@ final class StatisticsService
         $result = [];
 
         foreach ($groupedTransactions as $kind => $transactions) {
-            $manager = $this->transactionManagers->get($kind);
-            $result[$kind] = $manager->manageTransactions(...$transactions);
+            $aggregator = $this->transactionAggregators->get($kind);
+            $result[$kind] = $aggregator->aggregate(...$transactions);
         }
 
         ksort($result);

@@ -7,9 +7,9 @@ namespace Tests\Unit\TransactionsHistory\Domain\Service;
 use App\TransactionsHistory\Domain\IO\FileReaderServiceInterface;
 use App\TransactionsHistory\Domain\Mapper\TransactionMapperInterface;
 use App\TransactionsHistory\Domain\Service\StatisticsService;
-use App\TransactionsHistory\Domain\TransactionManager\TransactionManagerInterface;
+use App\TransactionsHistory\Domain\TransactionAggregator\TransactionAggregatorInterface;
 use App\TransactionsHistory\Domain\Transfer\Transaction;
-use App\TransactionsHistory\Domain\Transfer\TransactionManagers;
+use App\TransactionsHistory\Domain\Transfer\TransactionAggregators;
 use PHPUnit\Framework\TestCase;
 
 final class StatisticsServiceTest extends TestCase
@@ -36,15 +36,15 @@ final class StatisticsServiceTest extends TestCase
             fn(array $row) => (new Transaction())->setTransactionKind($row['Transaction Kind Header'])
         );
 
-        $kind1Manager = $this->createMock(TransactionManagerInterface::class);
-        $kind1Manager->method('manageTransactions')->willReturn(['kind 1' => 'manager']);
+        $kind1Aggregator = $this->createMock(TransactionAggregatorInterface::class);
+        $kind1Aggregator->method('aggregate')->willReturn(['kind 1' => 'manager']);
 
-        $kind2Manager = $this->createMock(TransactionManagerInterface::class);
-        $kind2Manager->method('manageTransactions')->willReturn(['kind 2' => 'manager']);
+        $kind2Aggregator = $this->createMock(TransactionAggregatorInterface::class);
+        $kind2Aggregator->method('aggregate')->willReturn(['kind 2' => 'manager']);
 
-        $transactionManagers = (new TransactionManagers())
-            ->add('transaction kind 1', $kind1Manager)
-            ->add('transaction kind 2', $kind2Manager);
+        $transactionManagers = (new TransactionAggregators())
+            ->put('transaction kind 1', $kind1Aggregator)
+            ->put('transaction kind 2', $kind2Aggregator);
 
         $statisticsService = new StatisticsService(
             $fileReaderService,

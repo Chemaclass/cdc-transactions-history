@@ -20,19 +20,19 @@ practicing TDD and some software architecture decisions just for fun.
 ### How does it work
 
 1. Add your `transactions.csv` file inside the `data/` folder.
-2. The mapping of the transaction managers by kind is in `TransactionsHistoryFactory::createTransactionManagers()`.
+2. The mapping of the transaction managers by kind is in `TransactionsHistoryFactory::createTransactionAggregators()`.
 
 ```php
-private function createTransactionManagers(): TransactionManagers
+private function createTransactionAggregators(): TransactionAggregators
 {
-    return (new TransactionManagers())
-        ->add(TransactionKind::CRYPTO_EXCHANGE, new ToCurrencyTransactionManager())
-        ->add(TransactionKind::CRYPTO_PURCHASE, new CurrencyTransactionManager())
-        // ...
+    return (new TransactionAggregators())
+        ->put(TransactionKind::CRYPTO_PAYMENT, new ToCurrencyAggregator())
+        ->put(TransactionKind::CRYPTO_PURCHASE, new CurrencyAggregator())
+        // etc...
 }
 ```
 
-In this function you can map what transaction manager do you want to use for each transaction kind.
+This function map what transaction aggregator to use for each transaction kind.
 
 ### Commands
 
