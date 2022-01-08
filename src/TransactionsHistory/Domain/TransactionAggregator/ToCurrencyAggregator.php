@@ -23,8 +23,11 @@ final class ToCurrencyAggregator implements TransactionAggregatorInterface
                 'totalInEuros' => 0,
             ];
 
-            $result[$currency]['total'] += $transaction->getToAmount();
-            $result[$currency]['totalInEuros'] += $transaction->getNativeAmount();
+            $totalAmount = (float) $result[$currency]['total'] + $transaction->getToAmount();
+            $result[$currency]['total'] = number_format($totalAmount, 8);
+
+            $totalAmount = (float) $result[$currency]['totalInEuros'] + $transaction->getNativeAmount();
+            $result[$currency]['totalInEuros'] = number_format($totalAmount, 2);
         }
 
         return $result;

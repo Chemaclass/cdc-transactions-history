@@ -43,8 +43,8 @@ final class StatisticsCommand extends Command
                 'The csv file path where the transactions are.',
                 self::DEFAULT_PATH
             )
-            ->addOption('kind', null, InputArgument::OPTIONAL, 'Filter by transaction kind')
-            ->addOption('ticker', null, InputArgument::OPTIONAL, 'Filter by ticker');
+            ->addOption('kind', 'k', InputArgument::OPTIONAL, 'Filter by transaction kind')
+            ->addOption('ticker', 't', InputArgument::OPTIONAL, 'Filter by ticker');
     }
 
     /**
@@ -94,24 +94,37 @@ final class StatisticsCommand extends Command
      */
     private function renderTransactionKind(array $transactionsGroupedByKind, string $transactionKind): void
     {
-        $this->output->writeln("$transactionKind:");
         /** @var null|string $ticker */
         $ticker = $this->input->getOption('ticker');
 
         $tickers = ($ticker)
             ? explode(',', $ticker)
-            : array_keys($transactionsGroupedByKind[$transactionKind]);
+            : array_keys($transactionsGroupedByKind[$transactionKind] ?? []);
+
+        if (empty($tickers)) {
+            $this->output->writeln('<error>  not found</error>');
+        }
 
         $maxTickerLength = $this->calculateMaxTickerLength($tickers);
 
+        $lines = [];
+
         foreach ($tickers as $ticker) {
-            $line = sprintf(
+            $values = $transactionsGroupedByKind[$transactionKind][$ticker] ?? [];
+
+            if (empty($values)) {
+                continue;
+            }
+            $lines[] = sprintf(
                 '  %s: %s',
                 str_pad($ticker, $maxTickerLength),
-                json_encode($transactionsGroupedByKind[$transactionKind][$ticker] ?? 'null')
+                json_encode($values)
             );
+        }
 
-            $this->output->writeln($line);
+        if ($lines) {
+            $this->output->writeln("<comment>$transactionKind:</comment>");
+            $this->output->writeln($lines);
         }
     }
 
