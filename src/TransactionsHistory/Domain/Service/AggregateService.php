@@ -12,7 +12,7 @@ use Safe\Exceptions\ArrayException;
 
 use function Safe\ksort;
 
-final class StatisticsService
+final class AggregateService
 {
     private FileReaderServiceInterface $fileReaderService;
 
@@ -41,7 +41,7 @@ final class StatisticsService
 
         $groupedTransactions = $this->generateTransactionsGroupedByKind($csv);
 
-        return $this->manageTransactions($groupedTransactions);
+        return $this->aggregateTransactions($groupedTransactions);
     }
 
     /**
@@ -73,7 +73,7 @@ final class StatisticsService
      *
      * @return array<string,array<string,mixed>>
      */
-    private function manageTransactions(array $groupedTransactions): array
+    private function aggregateTransactions(array $groupedTransactions): array
     {
         $result = [];
 

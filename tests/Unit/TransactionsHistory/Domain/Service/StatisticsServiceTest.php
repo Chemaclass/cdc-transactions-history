@@ -6,7 +6,7 @@ namespace Tests\Unit\TransactionsHistory\Domain\Service;
 
 use App\TransactionsHistory\Domain\IO\FileReaderServiceInterface;
 use App\TransactionsHistory\Domain\Mapper\TransactionMapperInterface;
-use App\TransactionsHistory\Domain\Service\StatisticsService;
+use App\TransactionsHistory\Domain\Service\AggregateService;
 use App\TransactionsHistory\Domain\TransactionAggregator\TransactionAggregatorInterface;
 use App\TransactionsHistory\Domain\Transfer\Transaction;
 use App\TransactionsHistory\Domain\Transfer\TransactionAggregators;
@@ -46,7 +46,7 @@ final class StatisticsServiceTest extends TestCase
             ->put('transaction kind 1', $kind1Aggregator)
             ->put('transaction kind 2', $kind2Aggregator);
 
-        $statisticsService = new StatisticsService(
+        $statisticsService = new AggregateService(
             $fileReaderService,
             $transactionMapper,
             $transactionManagers,

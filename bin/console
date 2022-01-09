@@ -19,5 +19,5 @@ Gacela::bootstrap($cwd);
 $transactionsHistoryFacade = new TransactionsHistoryFacade();
 
 $application = new Application();
-$application->add($transactionsHistoryFacade->getStatisticsCommand());
+$application->add($transactionsHistoryFacade->getAggregateTransactionsCommand());
 $application->run();

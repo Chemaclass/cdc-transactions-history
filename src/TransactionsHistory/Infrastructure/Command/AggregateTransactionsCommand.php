@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\TransactionsHistory\Infrastructure\Command;
 
-use App\TransactionsHistory\Domain\Service\StatisticsService;
+use App\TransactionsHistory\Domain\Service\AggregateService;
 use Safe\Exceptions\ArrayException;
 use Safe\Exceptions\JsonException;
 use Safe\Exceptions\StringsException;
@@ -16,11 +16,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 use function Safe\json_encode;
 use function Safe\sprintf;
 
-final class StatisticsCommand extends Command
+final class AggregateTransactionsCommand extends Command
 {
     private const DEFAULT_PATH = 'data/transactions.csv';
 
-    private StatisticsService $statisticsService;
+    private AggregateService $statisticsService;
 
     /** @psalm-suppress PropertyNotSetInConstructor */
     private InputInterface $input;
@@ -31,15 +31,15 @@ final class StatisticsCommand extends Command
     /** @var list<list<string>> */
     private array $linesBuffer = [];
 
-    public function __construct(StatisticsService $statisticsService)
+    public function __construct(AggregateService $statisticsService)
     {
-        parent::__construct('stats');
+        parent::__construct('aggregate');
         $this->statisticsService = $statisticsService;
     }
 
     protected function configure(): void
     {
-        $this->setDescription('Get interesting data from your transactions history group by transactions kind.')
+        $this->setDescription('Aggregate transactions grouped by kind.')
             ->addArgument(
                 'path',
                 InputArgument::OPTIONAL,

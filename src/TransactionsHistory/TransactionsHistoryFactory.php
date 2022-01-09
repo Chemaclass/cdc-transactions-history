@@ -6,12 +6,13 @@ namespace App\TransactionsHistory;
 
 use App\TransactionsHistory\Domain\IO\FileReaderServiceInterface;
 use App\TransactionsHistory\Domain\Mapper\TransactionMapperInterface;
-use App\TransactionsHistory\Domain\Service\StatisticsService;
+use App\TransactionsHistory\Domain\Service\AggregateService;
 use App\TransactionsHistory\Domain\TransactionAggregator\CurrencyAggregator;
 use App\TransactionsHistory\Domain\TransactionAggregator\ToCurrencyAggregator;
+use App\TransactionsHistory\Domain\TransactionAggregator\TransactionAggregatorInterface;
 use App\TransactionsHistory\Domain\Transfer\TransactionAggregators;
 use App\TransactionsHistory\Domain\Transfer\TransactionKind;
-use App\TransactionsHistory\Infrastructure\Command\StatisticsCommand;
+use App\TransactionsHistory\Infrastructure\Command\AggregateTransactionsCommand;
 use App\TransactionsHistory\Infrastructure\IO\CsvReaderService;
 use App\TransactionsHistory\Infrastructure\Mapper\CsvHeadersTransactionMapper;
 use Gacela\Framework\AbstractFactory;
@@ -21,16 +22,16 @@ use Gacela\Framework\AbstractFactory;
  */
 final class TransactionsHistoryFactory extends AbstractFactory
 {
-    public function createStatisticsCommand(): StatisticsCommand
+    public function createStatisticsCommand(): AggregateTransactionsCommand
     {
-        return new StatisticsCommand(
-            $this->createStatisticsService()
+        return new AggregateTransactionsCommand(
+            $this->createAggregateService()
         );
     }
 
-    private function createStatisticsService(): StatisticsService
+    private function createAggregateService(): AggregateService
     {
-        return new StatisticsService(
+        return new AggregateService(
             $this->createFileReaderService(),
             $this->createTransactionMapper(),
             $this->createTransactionAggregators()
@@ -49,8 +50,11 @@ final class TransactionsHistoryFactory extends AbstractFactory
 
     private function createTransactionAggregators(): TransactionAggregators
     {
-        $currencyAggregator = $this->createCurrencyAggregator();
-        $toCurrencyAggregator = $this->createToCurrencyAggregator();
+        /** @var TransactionAggregatorInterface $currencyAggregator */
+        $currencyAggregator = $this->getProvidedDependency(CurrencyAggregator::class);
+
+        /** @var TransactionAggregatorInterface $toCurrencyAggregator */
+        $toCurrencyAggregator = $this->getProvidedDependency(ToCurrencyAggregator::class);
 
         return (new TransactionAggregators())
             ->put(TransactionKind::CARD_CASHBACK_REVERTED, $currencyAggregator)
@@ -79,21 +83,5 @@ final class TransactionsHistoryFactory extends AbstractFactory
             ->put(TransactionKind::SUPERCHARGER_REWARD_TO_APP_CREDITED, $currencyAggregator)
             ->put(TransactionKind::SUPERCHARGER_WITHDRAWAL, $currencyAggregator)
             ->put(TransactionKind::VIBAN_PURCHASE, $toCurrencyAggregator);
-    }
-
-    private function createCurrencyAggregator(): CurrencyAggregator
-    {
-        return new CurrencyAggregator(
-            $this->getConfig()->getTotalDecimals(),
-            $this->getConfig()->getTotalNativeDecimals()
-        );
-    }
-
-    private function createToCurrencyAggregator(): ToCurrencyAggregator
-    {
-        return new ToCurrencyAggregator(
-            $this->getConfig()->getTotalDecimals(),
-            $this->getConfig()->getTotalNativeDecimals()
-        );
     }
 }

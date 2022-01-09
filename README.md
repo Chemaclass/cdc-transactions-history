@@ -20,7 +20,8 @@ practicing TDD and some software architecture decisions just for fun.
 ### How does it work
 
 1. Add your `transactions.csv` file inside the `data/` folder.
-2. The mapping of the transaction managers by kind is in `TransactionsHistoryFactory::createTransactionAggregators()`.
+2. It applies a concrete aggregator for each "transaction kind" group.
+3. The mapping with the aggregators by kind is in the `TransactionsHistoryFactory`.
 
 ```php
 private function createTransactionAggregators(): TransactionAggregators
@@ -32,12 +33,10 @@ private function createTransactionAggregators(): TransactionAggregators
 }
 ```
 
-This function map what transaction aggregator to use for each transaction kind.
-
 ### Commands
 
-- [stats](src/TransactionsHistory/Infrastructure/Command/StatisticsCommand.php):
-    - `php bin/console stats data/transactions.csv --kind=viban_purchase --ticker=ETH,ADA`
+- [aggregate](src/TransactionsHistory/Domain/Service/AggregateService.php):
+    - `php bin/console aggregate data/transactions.csv --ticker=ETH,ADA`
     - Options
         - `kind`: filter by transaction kind (optional; allowed multiple)
         - `ticker`: filter by ticker (optional; allowed multiple)
