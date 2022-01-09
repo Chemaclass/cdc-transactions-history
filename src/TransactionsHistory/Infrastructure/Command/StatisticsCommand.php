@@ -64,35 +64,19 @@ final class StatisticsCommand extends Command
         /** @var array<string,array<string,mixed>> */
         $transactionsGroupedByKind = $this->statisticsService->forFilepath($path);
 
-        /** @var null|string $transactionKind */
-        $transactionKind = $input->getOption('kind');
-
-        $transactionKinds = ($transactionKind)
-            ? explode(',', $transactionKind)
+        /** @var null|string $kind */
+        $kind = $input->getOption('kind');
+        $kinds = ($kind)
+            ? explode(',', $kind)
             : array_keys($transactionsGroupedByKind);
 
-        $this->addTransactionKindsToBuffer($transactionsGroupedByKind, $transactionKinds);
-
-        if (empty($this->linesBuffer)) {
-            $this->renderNoTransactionsFound();
-        } else {
-            $this->renderLinesBuffer();
+        foreach ($kinds as $transactionKind) {
+            $this->addTransactionKindToBuffer($transactionsGroupedByKind, $transactionKind);
         }
+
+        $this->renderBufferOutput();
 
         return self::SUCCESS;
-    }
-
-    /**
-     * @param array<string,array<string,mixed>> $transactionsGroupedByKind
-     * @param list<string>                      $kinds
-     *
-     * @throws JsonException|StringsException
-     */
-    private function addTransactionKindsToBuffer(array $transactionsGroupedByKind, array $kinds): void
-    {
-        foreach ($kinds as $kind) {
-            $this->addTransactionKindToBuffer($transactionsGroupedByKind, $kind);
-        }
     }
 
     /**
@@ -152,6 +136,15 @@ final class StatisticsCommand extends Command
         );
 
         return max($tickerLengths);
+    }
+
+    private function renderBufferOutput(): void
+    {
+        if (empty($this->linesBuffer)) {
+            $this->renderNoTransactionsFound();
+        } else {
+            $this->renderLinesBuffer();
+        }
     }
 
     private function renderNoTransactionsFound(): void
