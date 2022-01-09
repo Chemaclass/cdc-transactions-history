@@ -7,7 +7,6 @@ namespace App\TransactionsHistory;
 use App\TransactionsHistory\Domain\IO\FileReaderServiceInterface;
 use App\TransactionsHistory\Domain\Mapper\TransactionMapperInterface;
 use App\TransactionsHistory\Domain\Service\AggregateService;
-use App\TransactionsHistory\Domain\TransactionAggregator\TransactionAggregatorInterface;
 use App\TransactionsHistory\Domain\Transfer\TransactionAggregators;
 use App\TransactionsHistory\Infrastructure\Command\AggregateTransactionsCommand;
 use App\TransactionsHistory\Infrastructure\IO\CsvReaderService;
@@ -31,7 +30,7 @@ final class TransactionsHistoryFactory extends AbstractFactory
         return new AggregateService(
             $this->createFileReaderService(),
             $this->createTransactionMapper(),
-            $this->createTransactionAggregators()
+            $this->getTransactionAggregators()
         );
     }
 
@@ -45,16 +44,12 @@ final class TransactionsHistoryFactory extends AbstractFactory
         return new CsvHeadersTransactionMapper();
     }
 
-    private function createTransactionAggregators(): TransactionAggregators
+    /**
+     * Using the DependencyProvider as a singleton mechanism.
+     * So the TransactionAggregators and its Aggregators are cached in the Container.
+     */
+    private function getTransactionAggregators(): TransactionAggregators
     {
-        $aggregators = new TransactionAggregators();
-
-        foreach ($this->getConfig()->getTransactionKindAggregators() as $kind => $aggregatorClassName) {
-            /** @var TransactionAggregatorInterface $aggregator */
-            $aggregator = $this->getProvidedDependency($aggregatorClassName);
-            $aggregators->put($kind, $aggregator);
-        }
-
-        return $aggregators;
+        return $this->getProvidedDependency(TransactionAggregators::class);// @phpstan-ignore-line
     }
 }
