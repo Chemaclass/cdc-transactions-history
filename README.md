@@ -19,18 +19,16 @@ practicing TDD and some software architecture decisions just for fun.
 
 ### How does it work
 
-1. Add your `transactions.csv` file inside the `data/` folder.
-2. It applies a concrete aggregator for each "transaction kind" group.
-3. The mapping with the aggregators by kind is in the `TransactionsHistoryFactory`.
+1. It applies a concrete aggregator for each "transaction kind" group.
+2. The mapping with the aggregators by kind is in the `config.php`.
 
 ```php
-private function createTransactionAggregators(): TransactionAggregators
-{
-    return (new TransactionAggregators())
-        ->put(TransactionKind::CRYPTO_PAYMENT, new ToCurrencyAggregator())
-        ->put(TransactionKind::CRYPTO_PURCHASE, new CurrencyAggregator())
-        // etc...
-}
+return [
+    // ...
+    TransactionsHistoryConfig::TRANSACTION_KIND_AGGREGATORS => [
+        'crypto_exchange' => ToCurrencyAggregator::class,
+        'crypto_purchase' => CurrencyAggregator::class,
+        // ...
 ```
 
 ### Commands

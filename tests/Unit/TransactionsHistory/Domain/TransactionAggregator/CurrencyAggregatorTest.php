@@ -37,11 +37,13 @@ final class CurrencyAggregatorTest extends TestCase
                 'total' => '2.50',
                 'EUR' => '4.00',
                 'USD' => '6.00',
+                'description' => '',
             ],
             'DOT' => [
                 'total' => '1.00',
                 'EUR' => '2.00',
                 'USD' => '3.00',
+                'description' => '',
             ],
         ], $aggregator->aggregate(...$transactions));
     }

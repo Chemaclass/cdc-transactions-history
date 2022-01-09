@@ -37,11 +37,13 @@ abstract class AbstractAggregator implements TransactionAggregatorInterface
                 'total' => '0.0',
                 $this->nativeCurrencyKey => '0.0',
                 'USD' => '0.0',
+                'description' => '',
             ];
 
             $result[$currency]['total'] = $this->calculateTotalAmount($transaction, $result);
             $result[$currency][$this->nativeCurrencyKey] = $this->calculateNativeAmount($transaction, $result);
             $result[$currency]['USD'] = $this->calculateUSDAmount($transaction, $result);
+            $result[$currency]['description'] = $transaction->getTransactionDescription();
         }
 
         return $result;
