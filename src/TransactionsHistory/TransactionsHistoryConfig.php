@@ -12,9 +12,9 @@ final class TransactionsHistoryConfig extends AbstractConfig
 
     public const TOTAL_NATIVE_DECIMALS = 'TransactionsHistory::TOTAL_NATIVE_DECIMALS';
 
-    public const NATIVE_CURRENCY_KEY = 'TransactionsHistory::TOTAL_NATIVE_CURRENCY_KEY';
+    public const NATIVE_CURRENCY_KEY = 'TransactionsHistory::NATIVE_CURRENCY_KEY';
 
-    public const TRANSACTION_KIND_AGGREGATORS = 'transaction-kind-aggregators';
+    public const TRANSACTION_KIND_AGGREGATORS = 'TransactionsHistory::TRANSACTION_KIND_AGGREGATORS';
 
     public function getTotalDecimals(): int
     {

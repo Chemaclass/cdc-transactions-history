@@ -49,9 +49,9 @@ final class TransactionsHistoryFactory extends AbstractFactory
     {
         $aggregators = new TransactionAggregators();
 
-        foreach ($this->getConfig()->getTransactionKindAggregators() as $kind => $aggregatorName) {
+        foreach ($this->getConfig()->getTransactionKindAggregators() as $kind => $aggregatorClassName) {
             /** @var TransactionAggregatorInterface $aggregator */
-            $aggregator = $this->getProvidedDependency($aggregatorName);
+            $aggregator = $this->getProvidedDependency($aggregatorClassName);
             $aggregators->put($kind, $aggregator);
         }
 
