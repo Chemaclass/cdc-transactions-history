@@ -16,18 +16,15 @@ abstract class AbstractAggregator implements TransactionAggregatorInterface
 
     private int $totalNativeDecimals;
 
-    public function __construct(
-        int $totalDecimals,
-        string $nativeCurrencyKey,
-        int $totalNativeDecimals
-    ) {
+    public function __construct(int $totalDecimals, string $nativeCurrencyKey, int $totalNativeDecimals)
+    {
         $this->totalDecimals = $totalDecimals;
         $this->nativeCurrencyKey = $nativeCurrencyKey;
         $this->totalNativeDecimals = $totalNativeDecimals;
     }
 
     /**
-     * @return array<string,array<string,mixed>>
+     * @return array<string,array<string,string>>
      */
     public function aggregate(Transaction ...$transactions): array
     {
@@ -37,19 +34,14 @@ abstract class AbstractAggregator implements TransactionAggregatorInterface
             $currency = $this->getCurrency($transaction);
 
             $result[$currency] ??= [
-                'total' => 0.0,
-                $this->nativeCurrencyKey => 0.0,
-                'USD' => 0.0,
+                'total' => '0.0',
+                $this->nativeCurrencyKey => '0.0',
+                'USD' => '0.0',
             ];
 
-            $totalAmount = ((float) $result[$currency]['total']) + $this->getAmount($transaction);
-            $result[$currency]['total'] = number_format($totalAmount, $this->totalDecimals);
-
-            $totalAmount = (float) $result[$currency][$this->nativeCurrencyKey] + $transaction->getNativeAmount();
-            $result[$currency][$this->nativeCurrencyKey] = number_format($totalAmount, $this->totalNativeDecimals);
-
-            $totalAmount = (float) $result[$currency]['USD'] + $transaction->getNativeAmountInUSD();
-            $result[$currency]['USD'] = number_format($totalAmount, self::TOTAL_DECIMALS_IN_USD);
+            $result[$currency]['total'] = $this->calculateTotalAmount($transaction, $result);
+            $result[$currency][$this->nativeCurrencyKey] = $this->calculateNativeAmount($transaction, $result);
+            $result[$currency]['USD'] = $this->calculateUSDAmount($transaction, $result);
         }
 
         return $result;
@@ -57,5 +49,38 @@ abstract class AbstractAggregator implements TransactionAggregatorInterface
 
     abstract protected function getCurrency(Transaction $transaction): string;
 
-    abstract protected function getAmount(Transaction $transaction): float;
+    abstract protected function getAmountForTotal(Transaction $transaction): float;
+
+    /**
+     * @param array<string,array<string,string>> $result
+     */
+    private function calculateTotalAmount(Transaction $transaction, array $result): string
+    {
+        $currentAmount = (float) $result[$this->getCurrency($transaction)]['total'];
+        $totalAmount = $currentAmount + $this->getAmountForTotal($transaction);
+
+        return number_format($totalAmount, $this->totalDecimals);
+    }
+
+    /**
+     * @param array<string,array<string,string>> $result
+     */
+    private function calculateNativeAmount(Transaction $transaction, array $result): string
+    {
+        $currentAmount = (float) $result[$this->getCurrency($transaction)][$this->nativeCurrencyKey];
+        $totalAmount = $currentAmount + $transaction->getNativeAmount();
+
+        return number_format($totalAmount, $this->totalNativeDecimals);
+    }
+
+    /**
+     * @param array<string,array<string,string>> $result
+     */
+    private function calculateUSDAmount(Transaction $transaction, array $result): string
+    {
+        $currentAmount = (float) $result[$this->getCurrency($transaction)]['USD'];
+        $totalAmount = $currentAmount + $transaction->getNativeAmountInUSD();
+
+        return number_format($totalAmount, self::TOTAL_DECIMALS_IN_USD);
+    }
 }

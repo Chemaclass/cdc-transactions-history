@@ -13,7 +13,7 @@ final class CurrencyAggregator extends AbstractAggregator
         return $transaction->getCurrency();
     }
 
-    protected function getAmount(Transaction $transaction): float
+    protected function getAmountForTotal(Transaction $transaction): float
     {
         return $transaction->getAmount();
     }
