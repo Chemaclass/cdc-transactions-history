@@ -14,6 +14,8 @@ final class TransactionsHistoryConfig extends AbstractConfig
 
     public const NATIVE_CURRENCY_KEY = 'TransactionsHistory::TOTAL_NATIVE_CURRENCY_KEY';
 
+    public const TRANSACTION_KIND_AGGREGATORS = 'transaction-kind-aggregators';
+
     public function getTotalDecimals(): int
     {
         return (int) $this->get(self::TOTAL_DECIMALS, 6);// @phpstan-ignore-line
@@ -27,5 +29,13 @@ final class TransactionsHistoryConfig extends AbstractConfig
     public function getNativeCurrencyKey(): string
     {
         return (string) $this->get(self::NATIVE_CURRENCY_KEY);// @phpstan-ignore-line
+    }
+
+    /**
+     * @return array<string,class-string>
+     */
+    public function getTransactionKindAggregators(): array
+    {
+        return (array) $this->get(self::TRANSACTION_KIND_AGGREGATORS);// @phpstan-ignore-line
     }
 }
