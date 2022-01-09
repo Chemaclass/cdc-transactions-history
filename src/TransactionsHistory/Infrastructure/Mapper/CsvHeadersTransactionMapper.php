@@ -23,6 +23,7 @@ final class CsvHeadersTransactionMapper implements TransactionMapperInterface
             ->setToAmount((float) ($array['To Amount'] ?? ''))
             ->setNativeCurrency($array['Native Currency'] ?? '')
             ->setNativeAmount((float) ($array['Native Amount'] ?? ''))
+            ->setNativeAmountInUSD((float) ($array['Native Amount (in USD)'] ?? ''))
             ->setTransactionKind($array['Transaction Kind'] ?? '');
     }
 }

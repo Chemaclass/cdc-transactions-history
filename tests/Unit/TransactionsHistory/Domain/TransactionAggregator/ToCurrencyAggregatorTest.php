@@ -10,30 +10,39 @@ use PHPUnit\Framework\TestCase;
 
 final class ToCurrencyAggregatorTest extends TestCase
 {
-    private ToCurrencyAggregator $aggregator;
-
-    public function setUp(): void
-    {
-        $this->aggregator = new ToCurrencyAggregator(1, 2);
-    }
-
-    public function test_manage_transactions(): void
+    public function test_aggregate(): void
     {
         $transactions = [
-            (new Transaction())->setToCurrency('BCH')->setToAmount(1)->setNativeAmount(10),
-            (new Transaction())->setToCurrency('DOT')->setToAmount(2)->setNativeAmount(20.2),
-            (new Transaction())->setToCurrency('BCH')->setToAmount(3)->setNativeAmount(30.33),
+            (new Transaction())
+                ->setToCurrency('BCH')
+                ->setToAmount(1.25)
+                ->setNativeAmount(2)
+                ->setNativeAmountInUSD(3),
+            (new Transaction())
+                ->setToCurrency('BCH')
+                ->setToAmount(1.25)
+                ->setNativeAmount(2)
+                ->setNativeAmountInUSD(3),
+            (new Transaction())
+                ->setToCurrency('DOT')
+                ->setToAmount(1.00)
+                ->setNativeAmount(2)
+                ->setNativeAmountInUSD(3),
         ];
+
+        $aggregator = new ToCurrencyAggregator(2, 2);
 
         self::assertSame([
             'BCH' => [
-                'total' => '4.0',
-                'totalInEuros' => '40.33',
+                'total' => '2.50',
+                'totalInNative' => '4.00',
+                'totalInUSD' => '6.00',
             ],
             'DOT' => [
-                'total' => '2.0',
-                'totalInEuros' => '20.20',
+                'total' => '1.00',
+                'totalInNative' => '2.00',
+                'totalInUSD' => '3.00',
             ],
-        ], $this->aggregator->aggregate(...$transactions));
+        ], $aggregator->aggregate(...$transactions));
     }
 }

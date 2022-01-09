@@ -22,6 +22,8 @@ final class Transaction
 
     private float $nativeAmount = 0.0;
 
+    private float $nativeAmountInUSD = 0.0;
+
     private string $transactionKind = '';
 
     public function getTimestampUtc(): string
@@ -116,6 +118,18 @@ final class Transaction
     public function setNativeAmount(float $nativeAmount): self
     {
         $this->nativeAmount = $nativeAmount;
+
+        return $this;
+    }
+
+    public function getNativeAmountInUSD(): float
+    {
+        return $this->nativeAmountInUSD;
+    }
+
+    public function setNativeAmountInUSD(float $nativeAmount): self
+    {
+        $this->nativeAmountInUSD = $nativeAmount;
 
         return $this;
     }
