@@ -12,11 +12,17 @@ abstract class AbstractAggregator implements TransactionAggregatorInterface
 
     private int $totalDecimals;
 
+    private string $nativeCurrencyKey;
+
     private int $totalNativeDecimals;
 
-    public function __construct(int $totalDecimals, int $totalNativeDecimals)
-    {
+    public function __construct(
+        int $totalDecimals,
+        string $nativeCurrencyKey,
+        int $totalNativeDecimals
+    ) {
         $this->totalDecimals = $totalDecimals;
+        $this->nativeCurrencyKey = $nativeCurrencyKey;
         $this->totalNativeDecimals = $totalNativeDecimals;
     }
 
@@ -32,18 +38,18 @@ abstract class AbstractAggregator implements TransactionAggregatorInterface
 
             $result[$currency] ??= [
                 'total' => 0.0,
-                'totalInNative' => 0.0,
-                'totalInUSD' => 0.0,
+                $this->nativeCurrencyKey => 0.0,
+                'USD' => 0.0,
             ];
 
             $totalAmount = ((float) $result[$currency]['total']) + $this->getAmount($transaction);
             $result[$currency]['total'] = number_format($totalAmount, $this->totalDecimals);
 
-            $totalAmount = (float) $result[$currency]['totalInNative'] + $transaction->getNativeAmount();
-            $result[$currency]['totalInNative'] = number_format($totalAmount, $this->totalNativeDecimals);
+            $totalAmount = (float) $result[$currency][$this->nativeCurrencyKey] + $transaction->getNativeAmount();
+            $result[$currency][$this->nativeCurrencyKey] = number_format($totalAmount, $this->totalNativeDecimals);
 
-            $totalAmount = (float) $result[$currency]['totalInUSD'] + $transaction->getNativeAmountInUSD();
-            $result[$currency]['totalInUSD'] = number_format($totalAmount, self::TOTAL_DECIMALS_IN_USD);
+            $totalAmount = (float) $result[$currency]['USD'] + $transaction->getNativeAmountInUSD();
+            $result[$currency]['USD'] = number_format($totalAmount, self::TOTAL_DECIMALS_IN_USD);
         }
 
         return $result;

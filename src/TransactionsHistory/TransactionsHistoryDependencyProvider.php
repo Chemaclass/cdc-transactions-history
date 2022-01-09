@@ -24,6 +24,7 @@ final class TransactionsHistoryDependencyProvider extends AbstractDependencyProv
     {
         $container->set(CurrencyAggregator::class, fn() => new CurrencyAggregator(
             $this->getConfig()->getTotalDecimals(),
+            $this->getConfig()->getNativeCurrencyKey(),
             $this->getConfig()->getTotalNativeDecimals()
         ));
     }
@@ -32,6 +33,7 @@ final class TransactionsHistoryDependencyProvider extends AbstractDependencyProv
     {
         $container->set(ToCurrencyAggregator::class, fn() => new ToCurrencyAggregator(
             $this->getConfig()->getTotalDecimals(),
+            $this->getConfig()->getNativeCurrencyKey(),
             $this->getConfig()->getTotalNativeDecimals()
         ));
     }
