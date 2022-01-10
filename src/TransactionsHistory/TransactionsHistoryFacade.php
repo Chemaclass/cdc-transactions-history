@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\TransactionsHistory;
 
 use App\TransactionsHistory\Infrastructure\Command\AggregateTransactionsCommand;
-use App\TransactionsHistory\Infrastructure\Command\TransactionKindsCommand;
+use App\TransactionsHistory\Infrastructure\Command\TransactionTypesCommand;
 use Gacela\Framework\AbstractFacade;
 
 /**
@@ -18,8 +18,8 @@ final class TransactionsHistoryFacade extends AbstractFacade
         return $this->getFactory()->createAggregateTransactionsCommand();
     }
 
-    public function getTransactionKindsCommand(): TransactionKindsCommand
+    public function getTransactionTypesCommand(): TransactionTypesCommand
     {
-        return $this->getFactory()->createTransactionKindsCommand();
+        return $this->getFactory()->createTransactionTypesCommand();
     }
 }

@@ -33,7 +33,7 @@ final class StatisticsServiceTest extends TestCase
 
         $transactionMapper = $this->createMock(TransactionMapperInterface::class);
         $transactionMapper->method('map')->willReturnCallback(
-            fn(array $row) => (new Transaction())->setTransactionKind($row['Transaction Kind Header'])
+            fn(array $row) => (new Transaction())->setTransactionType($row['Transaction Kind Header'])
         );
 
         $kind1Aggregator = $this->createMock(TransactionAggregatorInterface::class);

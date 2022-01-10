@@ -24,7 +24,7 @@ final class Transaction
 
     private float $nativeAmountInUSD = 0.0;
 
-    private string $transactionKind = '';
+    private string $transactionType = '';
 
     public function getTimestampUtc(): string
     {
@@ -134,14 +134,14 @@ final class Transaction
         return $this;
     }
 
-    public function getTransactionKind(): string
+    public function getTransactionType(): string
     {
-        return $this->transactionKind;
+        return $this->transactionType;
     }
 
-    public function setTransactionKind(string $transactionKind): self
+    public function setTransactionType(string $transactionType): self
     {
-        $this->transactionKind = $transactionKind;
+        $this->transactionType = $transactionType;
 
         return $this;
     }

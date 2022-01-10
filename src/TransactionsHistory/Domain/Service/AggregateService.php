@@ -39,7 +39,7 @@ final class AggregateService
     {
         $csv = $this->fileReaderService->read($filepath);
 
-        $groupedTransactions = $this->generateTransactionsGroupedByKind($csv);
+        $groupedTransactions = $this->generateTransactionsGroupedByType($csv);
 
         return $this->aggregateTransactions($groupedTransactions);
     }
@@ -49,7 +49,7 @@ final class AggregateService
      *
      * @return array<string,list<Transaction>>
      */
-    private function generateTransactionsGroupedByKind(array $csv): array
+    private function generateTransactionsGroupedByType(array $csv): array
     {
         $transactions = array_map(
             fn(array $row): Transaction => $this->transactionMapper->map($row),
@@ -59,8 +59,8 @@ final class AggregateService
         $result = [];
 
         foreach ($transactions as $transaction) {
-            $result[$transaction->getTransactionKind()] ??= [];
-            $result[$transaction->getTransactionKind()][] = $transaction;
+            $result[$transaction->getTransactionType()] ??= [];
+            $result[$transaction->getTransactionType()][] = $transaction;
         }
 
         return $result;
@@ -77,9 +77,9 @@ final class AggregateService
     {
         $result = [];
 
-        foreach ($groupedTransactions as $kind => $transactions) {
-            $aggregator = $this->transactionAggregators->get($kind);
-            $result[$kind] = $aggregator->aggregate(...$transactions);
+        foreach ($groupedTransactions as $type => $transactions) {
+            $aggregator = $this->transactionAggregators->getAggregatorByType($type);
+            $result[$type] = $aggregator->aggregate(...$transactions);
         }
 
         ksort($result);

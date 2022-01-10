@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-final class TransactionKindsCommand extends Command
+final class TransactionTypesCommand extends Command
 {
     private const DEFAULT_PATH = 'data/transactions.csv';
 
@@ -19,13 +19,13 @@ final class TransactionKindsCommand extends Command
 
     public function __construct(AggregateService $statisticsService)
     {
-        parent::__construct('kinds');
+        parent::__construct('types');
         $this->statisticsService = $statisticsService;
     }
 
     protected function configure(): void
     {
-        $this->setDescription('Display all transaction kinds.')
+        $this->setDescription('Display all transaction types.')
             ->addArgument(
                 'path',
                 InputArgument::OPTIONAL,
@@ -43,10 +43,10 @@ final class TransactionKindsCommand extends Command
         $path = $input->getArgument('path');
 
         /** @var array<string,array<string,mixed>> */
-        $transactionsGroupedByKind = $this->statisticsService->forFilepath($path);
+        $transactionsGroupedByType = $this->statisticsService->forFilepath($path);
 
-        foreach (array_keys($transactionsGroupedByKind) as $transactionKind) {
-            $output->writeln("<comment>$transactionKind</comment>");
+        foreach (array_keys($transactionsGroupedByType) as $transactionType) {
+            $output->writeln("<comment>$transactionType</comment>");
         }
 
         return self::SUCCESS;

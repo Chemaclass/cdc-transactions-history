@@ -39,15 +39,15 @@ final class AggregateTransactionsCommand extends Command
 
     protected function configure(): void
     {
-        $this->setDescription('Aggregate transactions grouped by kind.')
+        $this->setDescription('Aggregate transactions grouped by type.')
             ->addArgument(
                 'path',
                 InputArgument::OPTIONAL,
                 'The csv file path where the transactions are.',
                 self::DEFAULT_PATH
             )
-            ->addOption('kind', 'k', InputArgument::OPTIONAL, 'Filter by transaction kind')
-            ->addOption('ticker', 't', InputArgument::OPTIONAL, 'Filter by ticker');
+            ->addOption('type', 't', InputArgument::OPTIONAL, 'Filter by transaction type')
+            ->addOption('currency', 'c', InputArgument::OPTIONAL, 'Filter by currency');
     }
 
     /**
@@ -62,16 +62,16 @@ final class AggregateTransactionsCommand extends Command
         $path = $input->getArgument('path');
 
         /** @var array<string,array<string,mixed>> */
-        $transactionsGroupedByKind = $this->statisticsService->forFilepath($path);
+        $transactionsGroupedByType = $this->statisticsService->forFilepath($path);
 
-        /** @var null|string $kind */
-        $kind = $input->getOption('kind');
-        $kinds = ($kind)
-            ? explode(',', $kind)
-            : array_keys($transactionsGroupedByKind);
+        /** @var null|string $inputType */
+        $inputType = $input->getOption('type');
+        $types = ($inputType)
+            ? explode(',', $inputType)
+            : array_keys($transactionsGroupedByType);
 
-        foreach ($kinds as $transactionKind) {
-            $this->addTransactionKindToBuffer($transactionsGroupedByKind, $transactionKind);
+        foreach ($types as $type) {
+            $this->addTransactionTypeToBuffer($transactionsGroupedByType, $type);
         }
 
         $this->renderBufferOutput();
@@ -80,62 +80,62 @@ final class AggregateTransactionsCommand extends Command
     }
 
     /**
-     * @param array<string,array<string,mixed>> $transactionsGroupedByKind
+     * @param array<string,array<string,mixed>> $transactionsGroupedByType
      *
      * @throws JsonException|StringsException
      */
-    private function addTransactionKindToBuffer(array $transactionsGroupedByKind, string $transactionKind): void
+    private function addTransactionTypeToBuffer(array $transactionsGroupedByType, string $transactionType): void
     {
-        /** @var null|string $ticker */
-        $ticker = $this->input->getOption('ticker');
+        /** @var null|string $inputCurrency */
+        $inputCurrency = $this->input->getOption('currency');
 
-        $tickers = ($ticker)
-            ? explode(',', $ticker)
-            : array_keys($transactionsGroupedByKind[$transactionKind] ?? []);
+        $currencies = ($inputCurrency)
+            ? explode(',', $inputCurrency)
+            : array_keys($transactionsGroupedByType[$transactionType] ?? []);
 
-        if (empty($tickers)) {
+        if (empty($currencies)) {
             return;
         }
 
-        $maxTickerLength = $this->calculateMaxTickerLength($tickers);
+        $maxCurrencyLength = $this->calculateMaxCurrencyLength($currencies);
 
         $lines = [];
 
-        foreach ($tickers as $ticker) {
-            $values = $transactionsGroupedByKind[$transactionKind][$ticker] ?? [];
+        foreach ($currencies as $currency) {
+            $values = $transactionsGroupedByType[$transactionType][$currency] ?? [];
 
             if (empty($values)) {
                 continue;
             }
             $lines[] = sprintf(
                 '  %s: %s',
-                str_pad($ticker, $maxTickerLength),
+                str_pad($currency, $maxCurrencyLength),
                 json_encode($values)
             );
         }
 
         if ($lines) {
-            array_unshift($lines, "<comment>$transactionKind:</comment>");
+            array_unshift($lines, "<comment>$transactionType:</comment>");
             $this->linesBuffer[] = $lines;
         }
     }
 
     /**
-     * @param list<string> $tickers
+     * @param list<string> $currencies
      */
-    private function calculateMaxTickerLength(array $tickers): int
+    private function calculateMaxCurrencyLength(array $currencies): int
     {
-        if (empty($tickers)) {
+        if (empty($currencies)) {
             return 0;
         }
 
-        /** @var non-empty-list<int> $tickerLengths */
-        $tickerLengths = array_map(
+        /** @var non-empty-list<int> $currenciesLengths */
+        $currenciesLengths = array_map(
             static fn(string $k): int => mb_strlen($k),
-            $tickers
+            $currencies
         );
 
-        return max($tickerLengths);
+        return max($currenciesLengths);
     }
 
     private function renderBufferOutput(): void
@@ -152,9 +152,9 @@ final class AggregateTransactionsCommand extends Command
         $this->output->writeln('<info>No transactions found with that criteria</info>');
         $this->output->writeln(
             sprintf(
-                '  --kind:%s, --ticker=%s',
-                $this->input->getOption('kind') ?: 'empty',
-                $this->input->getOption('ticker') ?: 'empty'
+                '  --type:%s, --currency=%s',
+                $this->input->getOption('type') ?: 'empty',
+                $this->input->getOption('currency') ?: 'empty'
             )
         );
     }

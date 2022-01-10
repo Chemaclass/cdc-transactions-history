@@ -30,12 +30,13 @@ final class TransactionsHistoryDependencyProvider extends AbstractDependencyProv
     private function addTransactionAggregators(Container $container): void
     {
         $container->set(TransactionAggregators::class, function(Container $container): TransactionAggregators {
+            $classNamesByType = $this->getConfig()->getTransactionAggregatorClassNamesByType();
             $aggregators = new TransactionAggregators();
 
-            foreach ($this->getConfig()->getTransactionAggregatorClassNameByKind() as $kind => $aggregatorClassName) {
+            foreach ($classNamesByType as $transactionType => $className) {
                 /** @var TransactionAggregatorInterface $aggregator */
-                $aggregator = $container->get($aggregatorClassName);
-                $aggregators->put($kind, $aggregator);
+                $aggregator = $container->get($className);
+                $aggregators->put($transactionType, $aggregator);
             }
 
             return $aggregators;

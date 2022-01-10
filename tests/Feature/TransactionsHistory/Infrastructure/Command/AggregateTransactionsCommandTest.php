@@ -20,17 +20,17 @@ final class AggregateTransactionsCommandTest extends TestCase
         $this->command = (new TransactionsHistoryFacade())->getAggregateTransactionsCommand();
     }
 
-    public function test_stats_existing_transaction_kind(): void
+    public function test_stats_existing_transaction_type(): void
     {
         $actual = $this->command->run(
-            new StringInput(__DIR__ . '/Fixtures/mock-stats.csv --kind=viban_purchase'),
+            new StringInput(__DIR__ . '/Fixtures/mock-stats.csv --type=viban_purchase'),
             $this->createMock(OutputInterface::class)
         );
 
         self::assertSame(Command::SUCCESS, $actual);
     }
 
-    public function test_stats_tickers_not_found_when_non_existing_kind(): void
+    public function test_stats_tickers_not_found_when_non_existing_type(): void
     {
         $output = $this->createMock(OutputInterface::class);
         $output->method('writeln')->withConsecutive(
@@ -38,7 +38,7 @@ final class AggregateTransactionsCommandTest extends TestCase
         );
 
         $actual = $this->command->run(
-            new StringInput(__DIR__ . '/Fixtures/mock-stats.csv --kind=non-existing-kind'),
+            new StringInput(__DIR__ . '/Fixtures/mock-stats.csv --type=non-existing-kind'),
             $output
         );
 
