@@ -36,6 +36,7 @@ abstract class AbstractAggregator implements TransactionAggregatorInterface
             $nativeCurrency = $this->nativeCurrencyKey ?? $transaction->getNativeCurrency();
 
             $result[$currency] ??= [
+                'currency' => $currency,
                 'description' => '',
                 'total' => '0.0',
                 $nativeCurrency => '0.0',

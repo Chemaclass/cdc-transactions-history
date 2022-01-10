@@ -9,7 +9,7 @@ use App\TransactionsHistory\TransactionsHistoryFacade;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\StringInput;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 final class AggregateTransactionsCommandTest extends TestCase
 {
@@ -24,22 +24,7 @@ final class AggregateTransactionsCommandTest extends TestCase
     {
         $actual = $this->command->run(
             new StringInput(__DIR__ . '/Fixtures/mock-stats.csv --type=viban_purchase'),
-            $this->createMock(OutputInterface::class)
-        );
-
-        self::assertSame(Command::SUCCESS, $actual);
-    }
-
-    public function test_stats_tickers_not_found_when_non_existing_type(): void
-    {
-        $output = $this->createMock(OutputInterface::class);
-        $output->method('writeln')->withConsecutive(
-            ['<info>No transactions found with that criteria</info>'],
-        );
-
-        $actual = $this->command->run(
-            new StringInput(__DIR__ . '/Fixtures/mock-stats.csv --type=non-existing-kind'),
-            $output
+            new BufferedOutput()
         );
 
         self::assertSame(Command::SUCCESS, $actual);

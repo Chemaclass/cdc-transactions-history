@@ -7,6 +7,7 @@ namespace App\TransactionsHistory;
 use App\TransactionsHistory\Domain\IO\FileReaderServiceInterface;
 use App\TransactionsHistory\Domain\Mapper\TransactionMapperInterface;
 use App\TransactionsHistory\Domain\Service\AggregateService;
+use App\TransactionsHistory\Domain\Service\TransactionsFilter;
 use App\TransactionsHistory\Domain\Transfer\TransactionAggregators;
 use App\TransactionsHistory\Infrastructure\Command\AggregateTransactionsCommand;
 use App\TransactionsHistory\Infrastructure\Command\TransactionTypesCommand;
@@ -22,7 +23,8 @@ final class TransactionsHistoryFactory extends AbstractFactory
     public function createAggregateTransactionsCommand(): AggregateTransactionsCommand
     {
         return new AggregateTransactionsCommand(
-            $this->createAggregateService()
+            $this->createAggregateService(),
+            $this->createTransactionFilter()
         );
     }
 
@@ -40,6 +42,11 @@ final class TransactionsHistoryFactory extends AbstractFactory
             $this->createTransactionMapper(),
             $this->getTransactionAggregators()
         );
+    }
+
+    private function createTransactionFilter(): TransactionsFilter
+    {
+        return new TransactionsFilter();
     }
 
     private function createFileReaderService(): FileReaderServiceInterface

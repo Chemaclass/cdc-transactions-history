@@ -5,36 +5,28 @@ declare(strict_types=1);
 namespace App\TransactionsHistory\Infrastructure\Command;
 
 use App\TransactionsHistory\Domain\Service\AggregateService;
-use Safe\Exceptions\ArrayException;
-use Safe\Exceptions\JsonException;
-use Safe\Exceptions\StringsException;
+use App\TransactionsHistory\Domain\Service\TransactionsFilter;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-
-use function Safe\json_encode;
-use function Safe\sprintf;
 
 final class AggregateTransactionsCommand extends Command
 {
     private const DEFAULT_PATH = 'data/transactions.csv';
 
-    private AggregateService $statisticsService;
+    private AggregateService $aggregateService;
 
-    /** @psalm-suppress PropertyNotSetInConstructor */
-    private InputInterface $input;
+    private TransactionsFilter $transactionsFilter;
 
-    /** @psalm-suppress PropertyNotSetInConstructor */
-    private OutputInterface $output;
-
-    /** @var list<list<string>> */
-    private array $linesBuffer = [];
-
-    public function __construct(AggregateService $statisticsService)
-    {
+    public function __construct(
+        AggregateService $statisticsService,
+        TransactionsFilter $transactionsFilter
+    ) {
         parent::__construct('aggregate');
-        $this->statisticsService = $statisticsService;
+        $this->aggregateService = $statisticsService;
+        $this->transactionsFilter = $transactionsFilter;
     }
 
     protected function configure(): void
@@ -50,119 +42,42 @@ final class AggregateTransactionsCommand extends Command
             ->addOption('currency', 'c', InputArgument::OPTIONAL, 'Filter by currency');
     }
 
-    /**
-     * @throws ArrayException|JsonException|StringsException
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->input = $input;
-        $this->output = $output;
+        $transactionsGroupedByType = $this->transactionsGroupedByTypeForInput($input);
 
-        /** @var string $path */
-        $path = $input->getArgument('path');
-
-        /** @var array<string,array<string,mixed>> */
-        $transactionsGroupedByType = $this->statisticsService->forFilepath($path);
-
-        /** @var null|string $inputType */
-        $inputType = $input->getOption('type');
-        $types = ($inputType)
-            ? explode(',', $inputType)
-            : array_keys($transactionsGroupedByType);
-
-        foreach ($types as $type) {
-            $this->addTransactionTypeToBuffer($transactionsGroupedByType, $type);
+        foreach ($transactionsGroupedByType as $type => $transactions) {
+            $output->writeln("<comment>$type:</comment>");
+            $table = (new Table($output))
+                ->setHeaders(array_keys(reset($transactions)))// @phpstan-ignore-line
+                ->setRows($transactions);
+            $table->render();
         }
-
-        $this->renderBufferOutput();
 
         return self::SUCCESS;
     }
 
     /**
-     * @param array<string,array<string,mixed>> $transactionsGroupedByType
-     *
-     * @throws JsonException|StringsException
+     * @return array<string,array<string,mixed>>
      */
-    private function addTransactionTypeToBuffer(array $transactionsGroupedByType, string $transactionType): void
+    private function transactionsGroupedByTypeForInput(InputInterface $input): array
     {
+        /** @var string $path */
+        $path = $input->getArgument('path');
+
+        /** @var array<string,array<string,mixed>> */
+        $transactionsGroupedByType = $this->aggregateService->forFilepath($path);
+
+        /** @var null|string $inputType */
+        $inputType = $input->getOption('type');
+
         /** @var null|string $inputCurrency */
-        $inputCurrency = $this->input->getOption('currency');
+        $inputCurrency = $input->getOption('currency');
 
-        $currencies = ($inputCurrency)
-            ? explode(',', $inputCurrency)
-            : array_keys($transactionsGroupedByType[$transactionType] ?? []);
-
-        if (empty($currencies)) {
-            return;
-        }
-
-        $maxCurrencyLength = $this->calculateMaxCurrencyLength($currencies);
-
-        $lines = [];
-
-        foreach ($currencies as $currency) {
-            $values = $transactionsGroupedByType[$transactionType][$currency] ?? [];
-
-            if (empty($values)) {
-                continue;
-            }
-            $lines[] = sprintf(
-                '  %s: %s',
-                str_pad($currency, $maxCurrencyLength),
-                json_encode($values)
-            );
-        }
-
-        if ($lines) {
-            array_unshift($lines, "<comment>$transactionType:</comment>");
-            $this->linesBuffer[] = $lines;
-        }
-    }
-
-    /**
-     * @param list<string> $currencies
-     */
-    private function calculateMaxCurrencyLength(array $currencies): int
-    {
-        if (empty($currencies)) {
-            return 0;
-        }
-
-        /** @var non-empty-list<int> $currenciesLengths */
-        $currenciesLengths = array_map(
-            static fn(string $k): int => mb_strlen($k),
-            $currencies
+        return $this->transactionsFilter->filterForGroupedByType(
+            $transactionsGroupedByType,
+            $inputType,
+            $inputCurrency
         );
-
-        return max($currenciesLengths);
-    }
-
-    private function renderBufferOutput(): void
-    {
-        if (empty($this->linesBuffer)) {
-            $this->renderNoTransactionsFound();
-        } else {
-            $this->renderLinesBuffer();
-        }
-    }
-
-    private function renderNoTransactionsFound(): void
-    {
-        $this->output->writeln('<info>No transactions found with that criteria</info>');
-        $this->output->writeln(
-            sprintf(
-                '  --type:%s, --currency=%s',
-                $this->input->getOption('type') ?: 'empty',
-                $this->input->getOption('currency') ?: 'empty'
-            )
-        );
-    }
-
-    private function renderLinesBuffer(): void
-    {
-        foreach ($this->linesBuffer as $line) {
-            $this->output->writeln($line);
-        }
     }
 }
