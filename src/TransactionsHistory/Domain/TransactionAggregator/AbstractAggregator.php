@@ -65,7 +65,9 @@ abstract class AbstractAggregator implements TransactionAggregatorInterface
         $currentAmount = (float) $result[$this->getCurrency($transaction)]['total'];
         $totalAmount = $currentAmount + $this->getAmountForTotal($transaction);
 
-        return number_format($totalAmount, $this->totalDecimals);
+        $amount = number_format($totalAmount, $this->totalDecimals);
+
+        return rtrim(rtrim($amount, '0'), '.');
     }
 
     /**

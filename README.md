@@ -34,7 +34,7 @@ return [
 ### Commands
 
 - [aggregate](src/TransactionsHistory/Domain/Service/AggregateService.php):
-    - `php bin/console aggregate data/transactions.csv --ticker=ETH,ADA`
+    - `php bin/console aggregate data/transactions.csv --currency=BCH,ETH,ADA`
     - Options
-        - `kind`: filter by transaction kind (optional; allowed multiple)
-        - `ticker`: filter by ticker (optional; allowed multiple)
+        - `type`: filter by transaction type (optional; allowed multiple)
+        - `currency`: filter by currency/ticker (optional; allowed multiple)

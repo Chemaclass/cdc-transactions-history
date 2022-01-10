@@ -22,8 +22,8 @@ final class CurrencyAggregatorTest extends TestCase
         $actual = $aggregator->aggregate(...$transactions);
 
         self::assertSame(['BCH', 'DOT'], array_keys($actual));
-        self::assertSame('2.50', $actual['BCH']['total']);
-        self::assertSame('1.00', $actual['DOT']['total']);
+        self::assertSame('2.5', $actual['BCH']['total']);
+        self::assertSame('1', $actual['DOT']['total']);
     }
 
     public function test_aggregate_custom_native_currency_amount(): void
