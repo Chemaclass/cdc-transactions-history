@@ -78,7 +78,9 @@ final class AggregateService
         $result = [];
 
         foreach ($groupedTransactions as $type => $transactions) {
-            $aggregator = $this->transactionAggregators->getAggregatorByType($type);
+            /** @var Transaction $firstTransaction */
+            $firstTransaction = reset($transactions);
+            $aggregator = $this->transactionAggregators->getForTransaction($firstTransaction);
             $result[$type] = $aggregator->aggregate(...$transactions);
         }
 

@@ -12,15 +12,15 @@ final class TransactionAggregators
     /** @var array<string,TransactionAggregatorInterface> */
     private array $aggregators = [];
 
-    public function put(string $transactionType, TransactionAggregatorInterface $aggregator): self
+    public function add(TransactionAggregatorInterface $aggregator): self
     {
-        $this->aggregators[$transactionType] = $aggregator;
+        $this->aggregators[get_class($aggregator)] = $aggregator;
 
         return $this;
     }
 
-    public function getAggregatorByType(string $transactionType): TransactionAggregatorInterface
+    public function getForTransaction(Transaction $transaction): TransactionAggregatorInterface
     {
-        return $this->aggregators[$transactionType] ?? new NullAggregator();
+        return $this->aggregators[$transaction->getAggregatorClassName()] ?? new NullAggregator();
     }
 }
