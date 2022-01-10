@@ -25,7 +25,7 @@ practicing TDD and some software architecture decisions just for fun.
 ```php
 return [
     // ...
-    TransactionsHistoryConfig::TRANSACTION_KIND_AGGREGATORS => [
+    TransactionsHistoryConfig::TRANSACTION_AGGREGATORS_BY_TYPE => [
         'crypto_exchange' => ToCurrencyAggregator::class,
         'crypto_purchase' => CurrencyAggregator::class,
         // ...
