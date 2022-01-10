@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\TransactionsHistory\Domain\TransactionAggregator;
 
 use App\TransactionsHistory\Domain\Transfer\Transaction;
+use Safe\DateTimeImmutable;
 
 abstract class AbstractAggregator implements TransactionAggregatorInterface
 {
@@ -12,15 +13,15 @@ abstract class AbstractAggregator implements TransactionAggregatorInterface
 
     private int $totalDecimals;
 
-    private string $nativeCurrencyKey;
-
     private int $totalNativeDecimals;
 
-    public function __construct(int $totalDecimals, string $nativeCurrencyKey, int $totalNativeDecimals)
+    private ?string $nativeCurrencyKey;
+
+    public function __construct(int $totalDecimals, int $totalNativeDecimals, ?string $nativeCurrencyKey = null)
     {
         $this->totalDecimals = $totalDecimals;
-        $this->nativeCurrencyKey = $nativeCurrencyKey;
         $this->totalNativeDecimals = $totalNativeDecimals;
+        $this->nativeCurrencyKey = $nativeCurrencyKey;
     }
 
     /**
@@ -32,18 +33,21 @@ abstract class AbstractAggregator implements TransactionAggregatorInterface
 
         foreach ($transactions as $transaction) {
             $currency = $this->getCurrency($transaction);
+            $nativeCurrency = $this->nativeCurrencyKey ?? $transaction->getNativeCurrency();
 
             $result[$currency] ??= [
-                'total' => '0.0',
-                $this->nativeCurrencyKey => '0.0',
-                'USD' => '0.0',
                 'description' => '',
+                'total' => '0.0',
+                $nativeCurrency => '0.0',
+                'USD' => '0.0',
+                'last_datetime' => '',
             ];
 
-            $result[$currency]['total'] = $this->calculateTotalAmount($transaction, $result);
-            $result[$currency][$this->nativeCurrencyKey] = $this->calculateNativeAmount($transaction, $result);
-            $result[$currency]['USD'] = $this->calculateUSDAmount($transaction, $result);
             $result[$currency]['description'] = $transaction->getTransactionDescription();
+            $result[$currency]['total'] = $this->calculateTotalAmount($transaction, $result);
+            $result[$currency][$nativeCurrency] = $this->calculateNativeAmount($transaction, $result);
+            $result[$currency]['USD'] = $this->calculateUSDAmount($transaction, $result);
+            $result[$currency]['last_datetime'] = $this->calculateLastDateTime($transaction, $result, $currency);
         }
 
         return $result;
@@ -69,7 +73,8 @@ abstract class AbstractAggregator implements TransactionAggregatorInterface
      */
     private function calculateNativeAmount(Transaction $transaction, array $result): string
     {
-        $currentAmount = (float) $result[$this->getCurrency($transaction)][$this->nativeCurrencyKey];
+        $nativeCurrency = $this->nativeCurrencyKey ?? $transaction->getNativeCurrency();
+        $currentAmount = (float) $result[$this->getCurrency($transaction)][$nativeCurrency];
         $totalAmount = $currentAmount + $transaction->getNativeAmount();
 
         return number_format($totalAmount, $this->totalNativeDecimals);
@@ -84,5 +89,21 @@ abstract class AbstractAggregator implements TransactionAggregatorInterface
         $totalAmount = $currentAmount + $transaction->getNativeAmountInUSD();
 
         return number_format($totalAmount, self::TOTAL_DECIMALS_IN_USD);
+    }
+
+    /**
+     * @param array<string,array<string,string>> $result
+     */
+    private function calculateLastDateTime(Transaction $transaction, array $result, string $currency): string
+    {
+        if (empty($result[$currency]['last_datetime'])) {
+            return $transaction->getTimestampUtc();
+        }
+        $currentLastDateTime = new DateTimeImmutable($result[$currency]['last_datetime']);
+        $newLastLastDateTime = new DateTimeImmutable($transaction->getTimestampUtc());
+
+        return ($currentLastDateTime < $newLastLastDateTime)
+            ? $transaction->getTimestampUtc()
+            : $result[$currency]['last_datetime'];
     }
 }

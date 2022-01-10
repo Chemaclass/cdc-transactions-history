@@ -32,7 +32,7 @@ final class TransactionsHistoryDependencyProvider extends AbstractDependencyProv
         $container->set(TransactionAggregators::class, function(Container $container): TransactionAggregators {
             $aggregators = new TransactionAggregators();
 
-            foreach ($this->getConfig()->getTransactionKindAggregators() as $kind => $aggregatorClassName) {
+            foreach ($this->getConfig()->getTransactionAggregatorClassNameByKind() as $kind => $aggregatorClassName) {
                 /** @var TransactionAggregatorInterface $aggregator */
                 $aggregator = $container->get($aggregatorClassName);
                 $aggregators->put($kind, $aggregator);
@@ -46,8 +46,8 @@ final class TransactionsHistoryDependencyProvider extends AbstractDependencyProv
     {
         $container->set(CurrencyAggregator::class, fn() => new CurrencyAggregator(
             $this->getConfig()->getTotalDecimals(),
+            $this->getConfig()->getTotalNativeDecimals(),
             $this->getConfig()->getNativeCurrencyKey(),
-            $this->getConfig()->getTotalNativeDecimals()
         ));
     }
 
@@ -55,8 +55,8 @@ final class TransactionsHistoryDependencyProvider extends AbstractDependencyProv
     {
         $container->set(ToCurrencyAggregator::class, fn() => new ToCurrencyAggregator(
             $this->getConfig()->getTotalDecimals(),
+            $this->getConfig()->getTotalNativeDecimals(),
             $this->getConfig()->getNativeCurrencyKey(),
-            $this->getConfig()->getTotalNativeDecimals()
         ));
     }
 }

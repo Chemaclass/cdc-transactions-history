@@ -10,7 +10,7 @@ return [
     TransactionsHistoryConfig::TOTAL_DECIMALS => 8,
     TransactionsHistoryConfig::TOTAL_NATIVE_DECIMALS => 2,
     TransactionsHistoryConfig::NATIVE_CURRENCY_KEY => 'EUR',
-    TransactionsHistoryConfig::TRANSACTION_KIND_AGGREGATORS => [
+    TransactionsHistoryConfig::TRANSACTION_AGGREGATOR_CLASS_NAME_BY_KIND => [
         'crypto_deposit' => CurrencyAggregator::class,
         'crypto_earn_interest_paid' => CurrencyAggregator::class,
         'crypto_exchange' => ToCurrencyAggregator::class,
