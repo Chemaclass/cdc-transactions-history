@@ -1,9 +1,9 @@
 {
-    "description": "CDC Transactions History",
-    "name": "chemaclass/cdc-transactions-history",
+    "description": "Transactions Aggregator",
+    "name": "chemaclass/transactions-aggregator",
     "type": "project",
     "license": "MIT",
-    "keywords": ["php", "excel", "history"],
+    "keywords": ["php", "transactions", "aggregator"],
     "require": {
         "ext-json": "*",
         "php": ">=7.4",

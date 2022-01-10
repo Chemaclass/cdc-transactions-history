@@ -1,4 +1,4 @@
-# CDC Transactions History
+# Transactions Aggregator
 
 [![CI](https://github.com/Chemaclass/cdc-transactions-history/actions/workflows/ci.yml/badge.svg)](https://github.com/Chemaclass/cdc-transactions-history/actions/workflows/ci.yml)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Chemaclass/cdc-transactions-history/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Chemaclass/cdc-transactions-history/?branch=master)
