@@ -9,6 +9,7 @@ use App\TransactionsHistory\Domain\Mapper\TransactionMapperInterface;
 use App\TransactionsHistory\Domain\Service\AggregateService;
 use App\TransactionsHistory\Domain\Transfer\TransactionAggregators;
 use App\TransactionsHistory\Infrastructure\Command\AggregateTransactionsCommand;
+use App\TransactionsHistory\Infrastructure\Command\TransactionKindsCommand;
 use App\TransactionsHistory\Infrastructure\IO\CsvReaderService;
 use App\TransactionsHistory\Infrastructure\Mapper\CsvHeadersTransactionMapper;
 use Gacela\Framework\AbstractFactory;
@@ -18,9 +19,16 @@ use Gacela\Framework\AbstractFactory;
  */
 final class TransactionsHistoryFactory extends AbstractFactory
 {
-    public function createStatisticsCommand(): AggregateTransactionsCommand
+    public function createAggregateTransactionsCommand(): AggregateTransactionsCommand
     {
         return new AggregateTransactionsCommand(
+            $this->createAggregateService()
+        );
+    }
+
+    public function createTransactionKindsCommand(): TransactionKindsCommand
+    {
+        return new TransactionKindsCommand(
             $this->createAggregateService()
         );
     }

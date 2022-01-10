@@ -20,4 +20,5 @@ $transactionsHistoryFacade = new TransactionsHistoryFacade();
 
 $application = new Application();
 $application->add($transactionsHistoryFacade->getAggregateTransactionsCommand());
+$application->add($transactionsHistoryFacade->getTransactionKindsCommand());
 $application->run();
