@@ -19,17 +19,8 @@ practicing TDD and some software architecture decisions just for fun.
 
 ### How does it work
 
-1. It applies a concrete aggregator for each "transaction kind" group.
-2. The mapping with the aggregators by kind is in the `config.php`.
-
-```php
-return [
-    // ...
-    TransactionsHistoryConfig::TRANSACTION_AGGREGATORS_BY_TYPE => [
-        'crypto_exchange' => ToCurrencyAggregator::class,
-        'crypto_purchase' => CurrencyAggregator::class,
-        // ...
-```
+1. It applies a concrete aggregator for each transaction type group.
+2. The mapping with the aggregators is chosen on the fly when mapping the transactions. See `CsvHeadersTransactionMapper`.
 
 ### Commands
 

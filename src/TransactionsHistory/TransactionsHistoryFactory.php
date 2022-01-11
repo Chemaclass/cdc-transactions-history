@@ -8,6 +8,8 @@ use App\TransactionsHistory\Domain\IO\FileReaderServiceInterface;
 use App\TransactionsHistory\Domain\Mapper\TransactionMapperInterface;
 use App\TransactionsHistory\Domain\Service\AggregateService;
 use App\TransactionsHistory\Domain\Service\TransactionsFilter;
+use App\TransactionsHistory\Domain\TransactionAggregator\CurrencyAggregator;
+use App\TransactionsHistory\Domain\TransactionAggregator\ToCurrencyAggregator;
 use App\TransactionsHistory\Domain\Transfer\TransactionAggregators;
 use App\TransactionsHistory\Infrastructure\Command\AggregateTransactionsCommand;
 use App\TransactionsHistory\Infrastructure\Command\TransactionTypesCommand;
@@ -40,7 +42,7 @@ final class TransactionsHistoryFactory extends AbstractFactory
         return new AggregateService(
             $this->createFileReaderService(),
             $this->createTransactionMapper(),
-            $this->getTransactionAggregators()
+            $this->createTransactionAggregators()
         );
     }
 
@@ -59,12 +61,28 @@ final class TransactionsHistoryFactory extends AbstractFactory
         return new CsvHeadersTransactionMapper();
     }
 
-    /**
-     * Using the DependencyProvider as a singleton mechanism.
-     * So the TransactionAggregators and its Aggregators are cached in the Container.
-     */
-    private function getTransactionAggregators(): TransactionAggregators
+    private function createTransactionAggregators(): TransactionAggregators
     {
-        return $this->getProvidedDependency(TransactionAggregators::class);// @phpstan-ignore-line
+        return (new TransactionAggregators())
+            ->add($this->createCurrencyAggregator())
+            ->add($this->createToCurrencyAggregator());
+    }
+
+    private function createCurrencyAggregator(): CurrencyAggregator
+    {
+        return new CurrencyAggregator(
+            $this->getConfig()->getTotalDecimals(),
+            $this->getConfig()->getTotalNativeDecimals(),
+            $this->getConfig()->getNativeCurrencyKey(),
+        );
+    }
+
+    private function createToCurrencyAggregator(): ToCurrencyAggregator
+    {
+        return new ToCurrencyAggregator(
+            $this->getConfig()->getTotalDecimals(),
+            $this->getConfig()->getTotalNativeDecimals(),
+            $this->getConfig()->getNativeCurrencyKey(),
+        );
     }
 }

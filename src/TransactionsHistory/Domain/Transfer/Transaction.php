@@ -26,6 +26,8 @@ final class Transaction
 
     private string $transactionType = '';
 
+    private string $aggregatorClassName = '';
+
     public function getTimestampUtc(): string
     {
         return $this->timestampUtc;
@@ -142,6 +144,18 @@ final class Transaction
     public function setTransactionType(string $transactionType): self
     {
         $this->transactionType = $transactionType;
+
+        return $this;
+    }
+
+    public function getAggregatorClassName(): string
+    {
+        return $this->aggregatorClassName;
+    }
+
+    public function setAggregatorClassName(string $aggregatorClassName): self
+    {
+        $this->aggregatorClassName = $aggregatorClassName;
 
         return $this;
     }

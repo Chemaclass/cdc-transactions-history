@@ -30,12 +30,4 @@ final class TransactionsHistoryConfig extends AbstractConfig
     {
         return $this->get(self::NATIVE_CURRENCY_KEY, null);// @phpstan-ignore-line
     }
-
-    /**
-     * @return array<string,class-string>
-     */
-    public function getTransactionAggregatorsByType(): array
-    {
-        return (array) $this->get(self::TRANSACTION_AGGREGATORS_BY_TYPE);// @phpstan-ignore-line
-    }
 }
