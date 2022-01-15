@@ -5,43 +5,38 @@ declare(strict_types=1);
 namespace App\TransactionsHistory\Infrastructure\Mapper;
 
 use App\TransactionsHistory\Domain\Mapper\TransactionMapperInterface;
-use App\TransactionsHistory\Domain\TransactionAggregator\CurrencyAggregator;
-use App\TransactionsHistory\Domain\TransactionAggregator\ToCurrencyAggregator;
 use App\TransactionsHistory\Domain\Transfer\Transaction;
 
 final class CsvHeadersTransactionMapper implements TransactionMapperInterface
 {
+    private const DECIMAL_SEPARATOR = '.';
+
+    private const THOUSANDS_SEPARATOR = '';
+
+    private const DECIMALS = 20;
+
     /**
      * @param array<string,string> $array
      */
     public function map(array $array): Transaction
     {
-        $transaction = (new Transaction())
+        return (new Transaction())
             ->setTimestampUtc($array['Timestamp (UTC)'] ?? '')
             ->setTransactionDescription($array['Transaction Description'] ?? '')
             ->setCurrency($array['Currency'] ?? '')
-            ->setAmount((float) ($array['Amount'] ?? ''))
+            ->setAmount($this->asFloat(($array['Amount'] ?? '')))
             ->setToCurrency($array['To Currency'] ?? '')
-            ->setToAmount((float) ($array['To Amount'] ?? ''))
+            ->setToAmount($this->asFloat($array['To Amount'] ?? ''))
             ->setNativeCurrency($array['Native Currency'] ?? '')
-            ->setNativeAmount((float) ($array['Native Amount'] ?? ''))
-            ->setNativeAmountInUSD((float) ($array['Native Amount (in USD)'] ?? ''))
+            ->setNativeAmount($this->asFloat($array['Native Amount'] ?? ''))
+            ->setNativeAmountInUSD($this->asFloat($array['Native Amount (in USD)'] ?? ''))
             ->setTransactionType($array['Transaction Kind'] ?? '');
-
-        $transaction->setAggregatorClassName($this->getAggregatorClassName($transaction));
-
-        return $transaction;
     }
 
-    /**
-     * @return class-string
-     */
-    private function getAggregatorClassName(Transaction $transaction): string
+    private function asFloat(string $number): float
     {
-        if (!empty($transaction->getToAmount())) {
-            return ToCurrencyAggregator::class;
-        }
+        $float = number_format((float) $number, self::DECIMALS, self::DECIMAL_SEPARATOR, self::THOUSANDS_SEPARATOR);
 
-        return CurrencyAggregator::class;
+        return (float) rtrim(rtrim($float, '0'), self::DECIMAL_SEPARATOR);
     }
 }

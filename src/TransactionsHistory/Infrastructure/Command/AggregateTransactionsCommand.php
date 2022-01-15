@@ -46,13 +46,8 @@ final class AggregateTransactionsCommand extends Command
     {
         $transactionsGroupedByType = $this->transactionsGroupedByTypeForInput($input);
 
-        foreach ($transactionsGroupedByType as $type => $transactions) {
-            $output->writeln("<comment>$type:</comment>");
-            $table = (new Table($output))
-                ->setHeaders(array_keys(reset($transactions)))// @phpstan-ignore-line
-                ->setRows($transactions);
-            $table->render();
-        }
+        $this->renderTransactionsTypes($output, $transactionsGroupedByType);
+        $this->renderAllAggregatesTogether($output, $transactionsGroupedByType);
 
         return self::SUCCESS;
     }
@@ -78,6 +73,64 @@ final class AggregateTransactionsCommand extends Command
             $transactionsGroupedByType,
             $inputType,
             $inputCurrency
+        );
+    }
+
+    /**
+     * @param array<string,array<string,mixed>> $transactionsGroupedByType
+     */
+    private function renderTransactionsTypes(OutputInterface $output, array $transactionsGroupedByType): void
+    {
+        foreach ($transactionsGroupedByType as $type => $transactions) {
+            $output->writeln("<comment>$type:</comment>");
+            $table = (new Table($output))
+                ->setHeaders(array_keys(reset($transactions)))// @phpstan-ignore-line
+                ->setRows($transactions);
+            $table->render();
+        }
+    }
+
+    /**
+     * @param array<string,array<string,mixed>> $transactionsGroupedByType
+     */
+    private function renderAllAggregatesTogether(OutputInterface $output, array $transactionsGroupedByType): void
+    {
+        $groupedByCurrency = [];
+
+        foreach ($transactionsGroupedByType as $type => $values) {
+            foreach ($values as $value) {
+                $groupedByCurrency[$value['currency']][] = $value;// @phpstan-ignore-line
+            }
+        }
+
+        $result = [];
+
+        foreach ($groupedByCurrency as $currency => $values) {
+            $result[$currency] = [
+                'currency' => $currency,
+                'total' => $this->sumReduce(array_column($values, 'total')),
+                'EUR' => $this->sumReduce(array_column($values, 'EUR')),
+                'USD' => $this->sumReduce(array_column($values, 'USD')),
+            ];
+        }
+
+        $output->writeln('<comment>================================================</comment>');
+        $output->writeln('<comment>============== ALL TOGETHER ====================</comment>');
+        $output->writeln('<comment>================================================</comment>');
+        $table = (new Table($output))
+            ->setHeaders(array_keys(reset($result)))// @phpstan-ignore-line
+            ->setRows($result);
+        $table->render();
+    }
+
+    /**
+     * @param list<string> $list
+     */
+    private function sumReduce(array $list): float
+    {
+        return (float) array_reduce(
+            $list,
+            static fn($acc, $i) => bcadd($acc ?? '0', $i, 2)
         );
     }
 }

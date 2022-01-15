@@ -20,10 +20,20 @@ final class AggregateTransactionsCommandTest extends TestCase
         $this->command = (new TransactionsHistoryFacade())->getAggregateTransactionsCommand();
     }
 
-    public function test_stats_existing_transaction_type(): void
+    public function test_aggregate_existing_transaction_type(): void
     {
         $actual = $this->command->run(
             new StringInput(__DIR__ . '/Fixtures/mock-stats.csv --type=viban_purchase'),
+            new BufferedOutput()
+        );
+
+        self::assertSame(Command::SUCCESS, $actual);
+    }
+
+    public function test_aggregate_all(): void
+    {
+        $actual = $this->command->run(
+            new StringInput(__DIR__ . '/Fixtures/mock-stats.csv'),
             new BufferedOutput()
         );
 

@@ -31,10 +31,17 @@ final class AggregateServiceTest extends TestCase
         $fileReaderService = $this->createMock(FileReaderServiceInterface::class);
         $fileReaderService->method('read')->with('fake-file-path')->willReturn($transactions);
 
-        $aggregator = new class() implements TransactionAggregatorInterface {
+        $aggregator1 = new class() implements TransactionAggregatorInterface {
             public function aggregate(Transaction ...$transactions): array
             {
-                return ['type' => 'manager'];
+                return ['type1' => 'manager1'];
+            }
+        };
+
+        $aggregator2 = new class() implements TransactionAggregatorInterface {
+            public function aggregate(Transaction ...$transactions): array
+            {
+                return ['type2' => 'manager2'];
             }
         };
 
@@ -42,18 +49,19 @@ final class AggregateServiceTest extends TestCase
         $transactionMapper->method('map')->willReturnCallback(
             fn(array $row) => (new Transaction())
                 ->setTransactionType($row['Transaction Kind Header'])
-                ->setAggregatorClassName(get_class($aggregator))
         );
 
         $statisticsService = new AggregateService(
             $fileReaderService,
             $transactionMapper,
-            (new TransactionAggregators())->add($aggregator),
+            (new TransactionAggregators())
+                ->add($aggregator1)
+                ->add($aggregator2),
         );
 
         self::assertEquals([
-            'transaction type 1' => ['type' => 'manager'],
-            'transaction type 2' => ['type' => 'manager'],
+            'transaction type 1' => ['type1' => 'manager1', 'type2' => 'manager2'],
+            'transaction type 2' => ['type1' => 'manager1', 'type2' => 'manager2'],
         ], $statisticsService->forFilepath('fake-file-path'));
     }
 }

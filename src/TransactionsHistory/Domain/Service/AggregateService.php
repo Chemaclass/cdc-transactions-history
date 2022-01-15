@@ -78,10 +78,12 @@ final class AggregateService
         $result = [];
 
         foreach ($groupedTransactions as $type => $transactions) {
-            /** @var Transaction $firstTransaction */
-            $firstTransaction = reset($transactions);
-            $aggregator = $this->transactionAggregators->getForTransaction($firstTransaction);
-            $result[$type] = $aggregator->aggregate(...$transactions);
+            $currentAggregated = [];
+
+            foreach ($this->transactionAggregators->getAll() as $aggregator) {
+                $currentAggregated[] = $aggregator->aggregate(...$transactions);
+            }
+            $result[$type] = array_merge(...$currentAggregated);
         }
 
         ksort($result);

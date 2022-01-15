@@ -10,12 +10,28 @@ use PHPUnit\Framework\TestCase;
 
 final class CurrencyAggregatorTest extends TestCase
 {
-    public function test_aggregate_total(): void
+    public function test_aggregate_amoount_total(): void
     {
         $transactions = [
             (new Transaction())->setCurrency('BCH')->setAmount(1.25),
             (new Transaction())->setCurrency('BCH')->setAmount(1.25),
             (new Transaction())->setCurrency('DOT')->setAmount(1.00),
+        ];
+
+        $aggregator = new CurrencyAggregator(2, 2);
+        $actual = $aggregator->aggregate(...$transactions);
+
+        self::assertSame(['BCH', 'DOT'], array_keys($actual));
+        self::assertSame('2.5', $actual['BCH']['total']);
+        self::assertSame('1', $actual['DOT']['total']);
+    }
+
+    public function test_aggregate_to_amount_total(): void
+    {
+        $transactions = [
+            (new Transaction())->setToCurrency('BCH')->setToAmount(1.25),
+            (new Transaction())->setToCurrency('BCH')->setToAmount(1.25),
+            (new Transaction())->setToCurrency('DOT')->setToAmount(1.00),
         ];
 
         $aggregator = new CurrencyAggregator(2, 2);

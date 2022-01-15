@@ -9,7 +9,6 @@ use App\TransactionsHistory\Domain\Mapper\TransactionMapperInterface;
 use App\TransactionsHistory\Domain\Service\AggregateService;
 use App\TransactionsHistory\Domain\Service\TransactionsFilter;
 use App\TransactionsHistory\Domain\TransactionAggregator\CurrencyAggregator;
-use App\TransactionsHistory\Domain\TransactionAggregator\ToCurrencyAggregator;
 use App\TransactionsHistory\Domain\Transfer\TransactionAggregators;
 use App\TransactionsHistory\Infrastructure\Command\AggregateTransactionsCommand;
 use App\TransactionsHistory\Infrastructure\Command\TransactionTypesCommand;
@@ -64,22 +63,12 @@ final class TransactionsHistoryFactory extends AbstractFactory
     private function createTransactionAggregators(): TransactionAggregators
     {
         return (new TransactionAggregators())
-            ->add($this->createCurrencyAggregator())
-            ->add($this->createToCurrencyAggregator());
+            ->add($this->createCurrencyAggregator());
     }
 
     private function createCurrencyAggregator(): CurrencyAggregator
     {
         return new CurrencyAggregator(
-            $this->getConfig()->getTotalDecimals(),
-            $this->getConfig()->getTotalNativeDecimals(),
-            $this->getConfig()->getNativeCurrencyKey(),
-        );
-    }
-
-    private function createToCurrencyAggregator(): ToCurrencyAggregator
-    {
-        return new ToCurrencyAggregator(
             $this->getConfig()->getTotalDecimals(),
             $this->getConfig()->getTotalNativeDecimals(),
             $this->getConfig()->getNativeCurrencyKey(),
